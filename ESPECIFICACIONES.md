@@ -46,22 +46,51 @@ Desarrollar una aplicación web interactiva (SPA) full-stack para la gestión de
 
 ```text
 sistema-inventario/
+├── .gitignore
 ├── ESPECIFICACIONES.md
 ├── backend/
-│   ├── config/          # Conexión a BD y variables de entorno
-│   ├── controllers/     # Lógica de negocio (Auth y Productos)
-│   ├── middlewares/     # Protección de rutas (JWT/Sesión y verificación)
-│   ├── routes/          # Rutas API (/api/auth, /api/productos)
-│   ├── .env
+│   ├── config/
+│   ├── controllers/
+│   ├── middlewares/
+│   ├── routes/
+│   ├── services/
+│   ├── .env             # Local, no se versiona
+│   ├── .env.example     # Variables de entorno de referencia
 │   ├── .gitignore
 │   ├── package.json
+│   ├── package-lock.json
 │   └── server.js
 └── frontend/
-    ├── css/             # Estilos del Dashboard y Login
-    ├── js/              # Módulos de JS (auth.js, inventario.js, captcha.js)
-    ├── index.html       # Vista principal (Dashboard SPA)
-    └── login.html       # Vista de acceso
+    ├── src/
+    │   ├── css/         # Estilos del Dashboard y Login
+    │   ├── js/          # Módulos del frontend
+    │   ├── index.html   # Entrada de la SPA
+    │   └── login.html   # Vista de acceso
+    ├── package.json
+    ├── package-lock.json
+    └── vite.config.js
+```
 
+## Inicialización local
+
+Se requiere Node.js 20 o superior.
+
+```powershell
+cd backend
+npm install
+npm run dev
+```
+
+En otra terminal:
+
+```powershell
+cd frontend
+npm install
+npm run dev
+```
+
+El backend expone el endpoint de comprobación `GET /api/health` en el puerto
+3000. Vite sirve el frontend y reenvía las solicitudes `/api` al backend.
 
 
 
