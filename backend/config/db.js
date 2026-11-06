@@ -1,4 +1,8 @@
-//ejemplo base de datos
-const { Sequelize } = require('sequelize');
+import pkg from 'pg';
+const { Pool } = pkg;
 
-console.log ("Hola Mundo")
+export const pool = new Pool({
+    connectionString: process.env.DATABASE_URL,
+});
+
+
