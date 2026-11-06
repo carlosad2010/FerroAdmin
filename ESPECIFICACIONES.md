@@ -65,8 +65,7 @@ sistema-inventario/
     │   ├── css/         # Estilos del Dashboard y Login
     │   ├── js/          # Módulos del frontend
     │   ├── index.html   # Entrada de la SPA
-    │   └── login.html   # Vista de acceso
-    ├── package.json
+    │   ├── package.json
     ├── package-lock.json
     └── vite.config.js
 ```
