@@ -4,13 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#f5f6f8" />
-    <title>FerroAdmin</title>
+    <title>Iniciar sesión | FerroAdmin</title>
     <link rel="stylesheet" href="/css/main.css" />
   </head>
   <body>
     <main class="app">
       <h1>FerroAdmin</h1>
       <p>Gestión de inventario para ferretería</p>
+
+      <section>
+        <h2>Iniciar sesión</h2>
+
+        <form id="form-login" novalidate>
+          <div class="campo">
+            <label for="email">Correo electrónico</label>
+            <input type="email" id="email" name="email" autocomplete="email" required />
+            <p class="error" id="error-email" aria-live="polite"></p>
+          </div>
+
+          <div class="campo">
+            <label for="password">Clave</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required />
+            <p class="error" id="error-password" aria-live="polite"></p>
+          </div>
+
+          <!-- Aquí irá el CAPTCHA (T07) -->
+
+          <button type="submit">Entrar</button>
+          <p class="error" id="error-general" aria-live="polite"></p>
+        </form>
+
+        <p>¿No tienes cuenta? <a href="/registro.html">Registrar</a></p>
+      </section>
+
       <p id="api-status" role="status">Comprobando conexión con el servidor...</p>
     </main>
     <script type="module" src="/js/main.js"></script>
