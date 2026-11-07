@@ -17,6 +17,48 @@
   padding: var(--espacio-4) var(--espacio-3);
 }
 
+/* --- Iconos (sprite /iconos.svg) ---------------------------------------- */
+
+.icono {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icono-sm { width: 1rem; height: 1rem; }
+
+/* --- Marca (logo + nombre) ---------------------------------------------- */
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-lateral-texto);
+  text-decoration: none;
+}
+
+.marca-logo { flex: none; width: 2.5rem; height: 2.5rem; }
+
+.marca-nombre {
+  display: block;
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-titulo);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.marca-lema {
+  display: block;
+  font-size: var(--texto-xs);
+  font-weight: 500;
+  color: var(--color-lateral-suave);
+}
+
 /* --- Tarjetas ----------------------------------------------------------- */
 
 .tarjeta {
@@ -24,33 +66,12 @@
   background: var(--color-tarjeta);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-md);
-}
-
-/* Tarjeta de login y registro: vidrio difuminado sobre las ondas */
-.auth-tarjeta {
-  width: min(100%, 26rem);
-  padding: var(--espacio-4);
-  background: var(--vidrio-fondo);
-  -webkit-backdrop-filter: blur(var(--blur-vidrio)) saturate(140%);
-  backdrop-filter: blur(var(--blur-vidrio)) saturate(140%);
-  border: 1px solid var(--vidrio-borde);
-  border-radius: var(--radio-lg);
-  box-shadow: var(--sombra-md);
+  box-shadow: var(--sombra-sm);
 }
 
 @media (min-width: 640px) {
-  .tarjeta,
-  .auth-tarjeta {
-    padding: var(--espacio-5);
-  }
-}
-
-/* Navegadores sin backdrop-filter: tarjeta blanca opaca (si no, el texto
-   quedaría sobre las ondas sin difuminar) */
-@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
-  .auth-tarjeta {
-    background: var(--color-tarjeta);
+  .tarjeta {
+    padding: var(--espacio-4) var(--espacio-4);
   }
 }
 
@@ -87,20 +108,20 @@
 
 .btn-primario {
   background: var(--color-primario);
-  color: var(--color-tarjeta);
+  color: var(--color-sobre-primario);
 }
 .btn-primario:hover:not(:disabled) { background: var(--color-primario-hover); }
 
-/* Texto azul oscuro sobre ámbar (7.1:1). Nunca blanco: solo 2.5:1 */
+/* Texto azul oscuro sobre ámbar (6.6:1). Nunca blanco: solo 2.2:1 */
 .btn-acento {
   background: var(--color-acento);
-  color: var(--color-primario);
+  color: var(--color-sobre-acento);
 }
 .btn-acento:hover:not(:disabled) { background: var(--color-acento-hover); }
 
 .btn-peligro {
   background: var(--color-error);
-  color: var(--color-tarjeta);
+  color: var(--color-sobre-error);
 }
 .btn-peligro:hover:not(:disabled) { background: var(--color-error-hover); }
 
@@ -110,12 +131,57 @@
   border-color: var(--color-borde-campo);
 }
 .btn-secundario:hover:not(:disabled) {
-  background: var(--color-fondo);
+  background: var(--color-fondo-hundido);
   border-color: var(--color-primario);
 }
 
-.btn-bloque {
-  width: 100%;
+/* Botón discreto, para acciones terciarias */
+.btn-fantasma {
+  background: transparent;
+  color: var(--color-texto-suave);
+}
+.btn-fantasma:hover:not(:disabled) {
+  background: var(--color-fondo-hundido);
+  color: var(--color-texto);
+}
+
+.btn-grande { min-height: 3.25rem; padding: 0 var(--espacio-4); font-size: var(--texto-lg); }
+.btn-pequeno { min-height: 2.25rem; padding: 0 0.75rem; font-size: var(--texto-sm); }
+.btn-bloque { width: 100%; }
+
+/* Botón cuadrado solo con icono: lleva aria-label obligatorio */
+.btn-icono {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  color: var(--color-texto-suave);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: background-color var(--transicion), color var(--transicion);
+}
+.btn-icono:hover { color: var(--color-texto); background: var(--color-fondo-hundido); }
+
+/* Punto numérico de notificaciones */
+.btn-icono[data-cuenta]::after {
+  content: attr(data-cuenta);
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.125rem;
+  text-align: center;
+  color: var(--color-sobre-error);
+  background: var(--color-error);
+  border-radius: var(--radio-pildora);
 }
 
 /* --- Formularios -------------------------------------------------------- */
@@ -137,8 +203,8 @@
 .campo select,
 .campo textarea {
   width: 100%;
-  min-height: var(--alto-control);
-  padding: var(--espacio-2) 0.75rem;
+  min-height: 3rem;
+  padding: var(--espacio-2) 0.875rem;
   font: inherit;
   font-size: 1rem; /* 16 px: evita el zoom automático de iOS */
   color: var(--color-texto);
@@ -146,6 +212,16 @@
   border: 1.5px solid var(--color-borde-campo);
   border-radius: var(--radio-md);
   transition: border-color var(--transicion);
+}
+
+.campo select {
+  padding-right: 2.5rem;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 1.25rem) 50%, calc(100% - 0.9rem) 50%;
+  background-size: 0.35rem 0.35rem;
+  background-repeat: no-repeat;
 }
 
 .campo textarea {
@@ -178,7 +254,7 @@
 
 .campo :disabled {
   color: var(--color-texto-suave);
-  background: var(--color-fondo);
+  background: var(--color-fondo-hundido);
   cursor: not-allowed;
 }
 
@@ -204,16 +280,15 @@ form > .error {
 
 .mensaje {
   --mensaje-color: var(--color-primario);
-  --mensaje-fondo: var(--color-fondo);
+  --mensaje-fondo: var(--color-fondo-hundido);
   display: flex;
   gap: var(--espacio-2);
   margin-bottom: var(--espacio-3);
   padding: 0.75rem var(--espacio-3);
   color: var(--color-texto);
   background: var(--mensaje-fondo);
-  border: 1px solid var(--color-borde);
-  border-left: 4px solid var(--mensaje-color);
-  border-radius: var(--radio-md);
+  border: 1px solid color-mix(in srgb, var(--mensaje-color) 35%, transparent);
+  border-radius: var(--radio-lg);
 }
 
 .mensaje::before {
@@ -237,37 +312,52 @@ form > .error {
 .mensaje-error::before { content: "✖"; content: "✖" / ""; }
 
 .mensaje-aviso {
-  --mensaje-color: var(--color-primario);
+  --mensaje-color: var(--color-aviso-texto);
   --mensaje-fondo: var(--color-acento-fondo);
-  border-left-color: var(--color-acento);
 }
 .mensaje-aviso::before { content: "!"; content: "!" / ""; }
 
-/* Estado de conexión con el servidor (#api-status) */
+/* Estado de conexión con el servidor (#api-status): píldora con símbolo */
 .estado {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
   margin: var(--espacio-4) 0 0;
+  padding: 0.375rem 0.75rem;
   font-size: var(--texto-sm);
+  line-height: 1.4;
   color: var(--color-texto-suave);
+  background: var(--color-fondo-hundido);
+  border-radius: var(--radio-lg);
 }
-.estado[data-estado="ok"] { color: var(--color-exito-texto); font-weight: 600; }
-.estado[data-estado="error"] { color: var(--color-error-texto); font-weight: 600; }
-.estado[data-estado="ok"]::before { content: "✔\00a0"; content: "✔\00a0" / ""; }
-.estado[data-estado="error"]::before { content: "✖\00a0"; content: "✖\00a0" / ""; }
+.estado[data-estado="ok"] { color: var(--color-exito-texto); background: var(--color-exito-fondo); font-weight: 600; }
+.estado[data-estado="error"] { color: var(--color-error-texto); background: var(--color-error-fondo); font-weight: 600; }
+.estado[data-estado="ok"]::before { content: "✔"; content: "✔" / ""; }
+.estado[data-estado="error"]::before { content: "✖"; content: "✖" / ""; }
 
 /* --- Insignias (stock) -------------------------------------------------- */
 
 .insignia {
-  display: inline-block;
-  padding: 0.125rem 0.625rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.75rem;
   font-size: var(--texto-sm);
   font-weight: 600;
   line-height: 1.5;
   white-space: nowrap;
-  border: 1px solid currentColor;
-  border-radius: 999px;
+  border: 1px solid transparent;
+  border-radius: var(--radio-pildora);
+}
+.insignia::before {
+  content: "";
+  width: 0.375rem;
+  height: 0.375rem;
+  background: currentColor;
+  border-radius: 50%;
 }
 .insignia-ok { color: var(--color-exito-texto); background: var(--color-exito-fondo); }
-.insignia-bajo { color: var(--color-primario); background: var(--color-acento-fondo); border-color: var(--color-acento); }
+.insignia-bajo { color: var(--color-aviso-texto); background: var(--color-acento-fondo); }
 .insignia-agotado { color: var(--color-error-texto); background: var(--color-error-fondo); }
 
 /* --- Tabla de inventario ------------------------------------------------ */
@@ -299,17 +389,22 @@ form > .error {
 }
 
 .tabla thead th {
-  font-size: var(--texto-sm);
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
   white-space: nowrap;
-  color: var(--color-tarjeta);
-  background: var(--color-primario);
+  color: var(--color-texto-suave);
+  background: var(--color-fondo-hundido);
 }
 
 .tabla tbody tr:last-child td { border-bottom: 0; }
 .tabla tbody tr:hover { background: var(--color-fondo); }
+.tabla tbody th, .tabla td:first-child { font-weight: 600; color: var(--color-texto); }
 .tabla .numero { text-align: right; font-variant-numeric: tabular-nums; }
-.tabla .acciones { white-space: nowrap; }
+.tabla .acciones { white-space: nowrap; text-align: right; }
 .tabla .acciones .btn { min-height: 2.25rem; padding: 0 var(--espacio-2); font-size: var(--texto-sm); }
+.tabla .sku { display: block; text-align: inherit; font-family: var(--fuente-mono); font-size: var(--texto-xs); font-weight: 500; color: var(--color-texto-suave); }
 
 /* Móvil: cada fila es una tarjeta; cada <td> necesita data-label="Nombre" */
 @media (max-width: 639.98px) {
@@ -356,11 +451,11 @@ form > .error {
   .tabla .acciones::before { content: none; }
 }
 
-/* --- Barra superior ----------------------------------------------------- */
+/* --- Barra superior simple (páginas sin barra lateral) ------------------ */
 
 .barra {
-  color: var(--color-tarjeta);
-  background: var(--color-primario);
+  color: var(--color-lateral-texto);
+  background: var(--color-lateral);
 }
 
 .barra-interior {
@@ -389,25 +484,25 @@ form > .error {
   align-items: center;
   min-height: var(--alto-control);
   padding: 0 0.75rem;
-  color: var(--color-tarjeta);
+  color: var(--color-lateral-texto);
   text-decoration: none;
   border-radius: var(--radio-md);
 }
 
 .barra a:hover {
-  background: color-mix(in srgb, var(--color-tarjeta) 14%, transparent);
+  background: var(--color-lateral-activo);
 }
 
 /* Elemento activo en ámbar, con texto azul oscuro */
 .barra a[aria-current="page"] {
   font-weight: 600;
-  color: var(--color-primario);
+  color: var(--color-sobre-acento);
   background: var(--color-acento);
 }
 
-/* Sobre fondo azul oscuro el anillo de foco es blanco */
+/* Sobre fondo oscuro el anillo de foco es claro */
 .barra :focus-visible {
-  outline-color: var(--color-tarjeta);
+  outline-color: var(--color-lateral-texto);
   box-shadow: none;
 }
 
@@ -420,7 +515,7 @@ form > .error {
   display: grid;
   place-items: center;
   padding: var(--espacio-3);
-  background: color-mix(in srgb, var(--color-primario) 55%, transparent);
+  background: color-mix(in srgb, var(--color-panel) 65%, transparent);
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
@@ -460,7 +555,6 @@ form > .error {
   font-size: clamp(4rem, 15vw, 8rem);
   font-weight: 800;
   line-height: 1;
+  letter-spacing: var(--ajuste-titulo);
   color: var(--color-primario);
-  /* sombra decorativa ámbar */
-  text-shadow: 0.04em 0.04em 0 var(--color-acento);
 }
