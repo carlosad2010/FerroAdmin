@@ -1,21 +1,49 @@
-import "dotenv/config";
-import cors from "cors";
-import express from "express";
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import { pool } from './config/db.js';
 
 const app = express();
-const port = Number(process.env.PORT) || 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(cors());
+// 1. Middlewares globales
 app.use(express.json());
+app.use(cookieParser());
 
-app.get("/api/health", (_request, response) => {
-  response.json({ status: "ok" });
+// 2. Health check (§5.6) - Excepción que no va envuelta en data
+app.get('/api/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
 });
 
-app.use("/api", (_request, response) => {
-  response.status(404).json({ error: "API route not found" });
+// TODO: Aquí se montarán las rutas del contrato:
+// app.use('/api/auth', authRoutes);
+// app.use('/api/categorias', categoriasRoutes);
+// app.use('/api/productos', productosRoutes);
+
+// 3. Manejador 404 para rutas de API no encontradas (§3.2 del contrato)
+app.use('/api/*', (req, res) => {
+  res.status(404).json({
+    error: {
+      codigo: 'NO_ENCONTRADO',
+      mensaje: 'La ruta de API solicitada no existe'
+    }
+  });
 });
 
-app.listen(port, () => {
-  console.log(`Backend listening on http://localhost:${port}`);
+// 4. Manejador global de errores normalizado (§3.2)
+app.use((err, req, res, next) => {
+  console.error(' Error interno no controlado:', err.stack);
+  res.status(500).json({
+    error: {
+      codigo: 'ERROR_INTERNO',
+      mensaje: 'Ocurrió un error interno en el servidor'
+    }
+  });
+});
+
+// 5. Iniciar servidor
+app.listen(PORT, () => {
+  console.log(` Servidor Express de FerroAdmin corriendo en http://localhost:${PORT}`);
 });
