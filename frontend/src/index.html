@@ -7,12 +7,25 @@
     <title>Iniciar sesión | FerroAdmin</title>
     <link rel="stylesheet" href="/css/main.css" />
   </head>
-  <body>
-    <main class="app">
-      <h1>FerroAdmin</h1>
-      <p>Gestión de inventario para ferretería</p>
+  <body class="pagina-centrada">
+    <!-- Fondo de ondulaciones con la paleta (CONTRATO_API.md §1.4) -->
+    <svg class="ondas" viewBox="0 0 1440 800" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      <rect width="1440" height="800" fill="var(--color-fondo)" />
+      <path class="onda onda-1" fill="var(--color-primario)" d="M0 80 Q360 0 720 80 T1440 80 T2160 80 T2880 80 V800 H0 Z" />
+      <path class="onda onda-2" fill="var(--color-acento)" d="M0 260 Q360 180 720 260 T1440 260 T2160 260 T2880 260 V800 H0 Z" />
+      <path class="onda onda-3" fill="var(--color-exito)" d="M0 440 Q360 360 720 440 T1440 440 T2160 440 T2880 440 V800 H0 Z" />
+      <path class="onda onda-4" fill="var(--color-error)" d="M0 620 Q360 540 720 620 T1440 620 T2160 620 T2880 620 V800 H0 Z" />
+    </svg>
+    <main class="auth-tarjeta">
+      <h1 class="texto-centrado">FerroAdmin</h1>
+      <p class="texto-centrado texto-suave">Gestión de inventario para ferretería</p>
 
+<<<<<<< HEAD
+      <section>
+        <h2 class="texto-centrado">Iniciar sesión</h2>
+=======
      <div id="vista"></div>
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
       <main class="auth-panel">
         <div class="auth-columna">
@@ -23,6 +36,26 @@
       </main>
     </div>
 
+<<<<<<< HEAD
+          <div class="campo">
+            <label for="password">Clave</label>
+            <input type="password" id="password" name="password" autocomplete="current-password" required />
+            <p class="error" id="error-password" aria-live="polite"></p>
+          </div>
+
+          <!-- Aquí irá el CAPTCHA (T07) -->
+
+          <button type="submit" class="btn btn-primario btn-bloque">Entrar</button>
+          <p class="error" id="error-general" aria-live="polite"></p>
+        </form>
+
+        <p class="texto-centrado">¿No tienes cuenta? <a href="/registro.html">Registrar</a></p>
+      </section>
+
+      <p id="api-status" class="estado texto-centrado" role="status">Comprobando conexión con el servidor...</p>
+    </main>
+=======
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
     <script type="module" src="/js/main.js"></script>
     <script type="module" src="/js/app.js"></script>
   </body>

@@ -8,8 +8,13 @@
   box-sizing: border-box;
 }
 
+<<<<<<< HEAD
+/* El fondo va en <html> y NO en <body>: un fondo en <body> se pinta encima
+   del SVG de ondas (z-index: -1) y lo tapa. */
+=======
 /* El fondo va en <html> y NO en <body> (regla heredada de la v1; así
    cualquier capa decorativa con z-index negativo sigue visible). */
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 html {
   background: var(--color-fondo);
   -webkit-text-size-adjust: 100%;
@@ -26,13 +31,23 @@ body {
   color: var(--color-texto);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+<<<<<<< HEAD
+=======
   -webkit-font-smoothing: antialiased;
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 
 h1,
 h2,
 h3 {
   margin: 0 0 var(--espacio-2);
+<<<<<<< HEAD
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+h1 { font-size: var(--texto-2xl); }
+=======
   font-weight: 700;
   line-height: 1.2;
   letter-spacing: -0.01em;
@@ -40,6 +55,7 @@ h3 {
 }
 
 h1 { font-size: var(--texto-2xl); letter-spacing: var(--ajuste-titulo); }
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 h2 { font-size: var(--texto-xl); }
 h3 { font-size: var(--texto-lg); }
 
@@ -52,8 +68,13 @@ svg {
   max-width: 100%;
 }
 
+<<<<<<< HEAD
+/* Enlaces: azul oscuro y subrayado (el ámbar solo tiene 2.5:1 sobre blanco,
+   por eso no se usa para texto de enlaces) */
+=======
 /* Enlaces: color primario y subrayado (el ámbar solo tiene 2.2:1 sobre
    blanco, por eso no se usa para texto de enlaces) */
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 a {
   color: var(--color-primario);
   text-decoration: underline;
@@ -66,8 +87,13 @@ a:hover {
   text-decoration-thickness: 3px;
 }
 
+<<<<<<< HEAD
+/* Foco visible para teclado: anillo azul oscuro + halo ámbar.
+   Sobre fondos azul oscuro se sobrescribe el color (ver .barra). */
+=======
 /* Foco visible para teclado: anillo de --color-foco + halo ámbar.
    Sobre zonas oscuras (barra lateral, panel de marca) se sobrescribe. */
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 :focus-visible {
   outline: var(--foco-borde);
   outline-offset: var(--foco-separacion);

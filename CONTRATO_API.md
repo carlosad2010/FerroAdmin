@@ -78,7 +78,11 @@ Una sola página (`index.html`) con un enrutador propio basado en History API (`
 
 ### 1.4 Paleta de colores
 
+<<<<<<< HEAD
+Todos los colores del frontend salen de estas variables CSS, declaradas una sola vez en el bloque `:root` de `frontend/src/css/main.css`. Las hojas de estilo no usan códigos hexadecimales sueltos.
+=======
 Todos los colores del frontend salen de estas variables CSS, declaradas una sola vez en el bloque `:root` de `frontend/src/css/tokens.css`. Las hojas de estilo no usan códigos hexadecimales sueltos.
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
 | Variable | Color | Hex | Uso |
 |---|---|---|---|
@@ -104,12 +108,21 @@ Contraste (WCAG AA pide 4.5:1 para texto normal y 3:1 para texto grande, es deci
 
 | Combinación | Contraste | Uso |
 |---|---|---|
+<<<<<<< HEAD
+| Azul oscuro sobre tarjeta, o blanco sobre azul oscuro | 17.5:1 | Cualquier texto |
+| Azul oscuro sobre fondo | 16.5:1 | Cualquier texto |
+| Azul oscuro sobre ámbar | 7.1:1 | Texto de botones y etiquetas ámbar |
+| Blanco sobre ámbar | 2.5:1 | ❌ No usar: el texto sobre ámbar va en azul oscuro |
+| Blanco sobre error, o error sobre tarjeta | 5.4:1 | Cualquier texto |
+| Blanco sobre éxito, o éxito sobre tarjeta | 4.1:1 | Solo texto grande o en negrita, o acompañado de un ícono. Para texto normal usar `--color-exito-texto` |
+=======
 | Azul oscuro sobre tarjeta, o blanco sobre azul oscuro | 14.1:1 | Cualquier texto |
 | Azul oscuro sobre fondo | 13.5:1 | Cualquier texto |
 | Azul oscuro sobre ámbar | 6.6:1 | Texto de botones y etiquetas ámbar |
 | Blanco sobre ámbar | 2.2:1 | ❌ No usar: el texto sobre ámbar va en azul oscuro |
 | Blanco sobre error, o error sobre tarjeta | 4.8:1 | Cualquier texto |
 | Blanco sobre éxito, o éxito sobre tarjeta | 3.3:1 | Solo texto grande o en negrita, o acompañado de un ícono. Para texto normal usar `--color-exito-texto` |
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
 La paleta no incluye ningún gris. El texto secundario, los bordes, los estados hover y las versiones oscuras para texto (`--color-texto-suave`, `--color-borde`, `--color-exito-texto`, `--color-error-texto`, etc.) se **derivan** de estos 6 colores con `color-mix()` en `frontend/src/css/tokens.css`. Todos los detalles, componentes y reglas están en `GUIA_VISUAL.md`.
 

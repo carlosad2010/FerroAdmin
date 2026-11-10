@@ -5,6 +5,11 @@
 
 @import "./tokens.css";
 @import "./base.css";
+<<<<<<< HEAD
+@import "./fondo.css";
+@import "./componentes.css";
+=======
 @import "./componentes.css";
 @import "./auth.css";
 @import "./app.css";
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
