@@ -8,11 +8,13 @@ async function checkServer() {
     }
 
     const result = await response.json();
-    status.textContent =
-      result.status === "ok"
-        ? "Servidor conectado"
-        : "El servidor respondió con un estado inesperado";
+    const conectado = result.status === "ok";
+    status.dataset.estado = conectado ? "ok" : "error";
+    status.textContent = conectado
+      ? "Servidor conectado"
+      : "El servidor respondió con un estado inesperado";
   } catch (error) {
+    status.dataset.estado = "error";
     status.textContent = `No se pudo conectar con el servidor: ${error.message}`;
   }
 }
