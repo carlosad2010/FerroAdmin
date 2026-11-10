@@ -16,41 +16,9 @@
 
       <main class="auth-panel">
         <div class="auth-columna">
-          <div class="auth-formulario">
-            <h1>Iniciar sesión</h1>
-            <p class="auth-subtitulo">Ingresa para gestionar tu inventario.</p>
-
-            <form id="form-login" novalidate>
-              <div class="campo">
-                <label for="email">Correo electrónico</label>
-                <div class="campo-control">
-                  <svg class="icono" aria-hidden="true" focusable="false"><use href="/iconos.svg#i-correo" /></svg>
-                  <input type="email" id="email" name="email" autocomplete="email" placeholder="tu@ferreteria.co" required />
-                </div>
-                <p class="error" id="error-email" aria-live="polite"></p>
-              </div>
-
-              <div class="campo">
-                <label for="password">Clave</label>
-                <div class="campo-control">
-                  <svg class="icono" aria-hidden="true" focusable="false"><use href="/iconos.svg#i-candado" /></svg>
-                  <input type="password" id="password" name="password" autocomplete="current-password" placeholder="••••••••" required />
-                </div>
-                <p class="error" id="error-password" aria-live="polite"></p>
-              </div>
-
-              <!-- Aquí irá el CAPTCHA (T07) -->
-
-              <button type="submit" class="btn btn-primario btn-grande btn-bloque">
-                Entrar
-                <svg class="icono" aria-hidden="true" focusable="false"><use href="/iconos.svg#i-flecha" /></svg>
-              </button>
-              <p class="error" id="error-general" aria-live="polite"></p>
-            </form>
-
-            <p class="auth-alterno">¿No tienes cuenta? <a href="/registro.html">Registrar</a></p>
-            <p id="api-status" class="estado" role="status">Comprobando conexión con el servidor...</p>
-          </div>
+          <!-- js/app.js pinta aquí el login o el registro según la ruta (#/login, #/registro) -->
+          <div id="vista" class="auth-formulario"></div>
+          <p id="api-status" class="estado" role="status">Comprobando conexión con el servidor...</p>
         </div>
       </main>
     </div>

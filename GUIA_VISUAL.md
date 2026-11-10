@@ -105,7 +105,7 @@ Calculados con la fórmula de luminancia relativa de WCAG 2.1.
 
 ### Iconos
 
-Sprite en `/iconos.svg`. Disponibles: `i-panel`, `i-caja`, `i-etiqueta`, `i-buscar`, `i-campana`, `i-alerta`, `i-ok`, `i-mas`, `i-editar`, `i-eliminar`, `i-salir`, `i-flecha`, `i-pulso`, `i-intercambio` y el logo `logo`.
+Sprite en `/iconos.svg`. Disponibles: `i-panel`, `i-caja`, `i-etiqueta`, `i-buscar`, `i-campana`, `i-alerta`, `i-ok`, `i-mas`, `i-editar`, `i-eliminar`, `i-salir`, `i-flecha`, `i-pulso`, `i-intercambio`, `i-correo`, `i-candado`, `i-usuario`, `i-ojo`, `i-ojo-tachado` y el logo `logo`.
 
 ```html
 <svg class="icono" aria-hidden="true" focusable="false"><use href="/iconos.svg#i-caja" /></svg>
@@ -229,35 +229,69 @@ Píldora con un punto de color y texto (el texto es obligatorio: el color solo n
 
 ## 6. Login y registro: pantalla dividida (`auth.css`)
 
+`index.html` es un **cascarón fijo**: el panel de marca y el estado del servidor están en el HTML, y `js/app.js` solo pinta dentro de `#vista` el formulario que toca según la ruta (`#/login` o `#/registro`).
+
 ```html
 <div class="auth">
   <section class="auth-marca" aria-label="FerroAdmin">
-    <svg class="auth-arte" …>…patrón isométrico y cubos…</svg>
+    <svg class="auth-arte" …>…patrón isométrico…</svg>
+    <span class="auth-resplandor" aria-hidden="true"></span>
     <a class="marca" href="/">…</a>
     <div class="auth-marca-cuerpo">
       <p class="auth-titular" role="presentation">Cada tornillo, en su lugar.</p>
       <p class="auth-texto">…</p>
-      <ul class="auth-beneficios"><li><svg class="icono" …></svg>…</li></ul>
     </div>
-    <p class="auth-marca-pie">© 2026 FerroAdmin</p>
+    <div class="auth-escena" aria-hidden="true">
+      <svg class="auth-torre" …>…torre de cubos…</svg>
+      <div class="auth-ficha auth-ficha-1">…</div>
+    </div>
   </section>
   <main class="auth-panel">
-    <div class="auth-formulario">
-      <h1>Iniciar sesión</h1>
-      <p class="auth-subtitulo">…</p>
-      <form>…campos…</form>
-      <p class="auth-alterno">¿No tienes cuenta? <a href="…">Registrar</a></p>
+    <div class="auth-columna">
+      <div id="vista" class="auth-formulario"></div>   <!-- aquí pinta js/app.js -->
       <p id="api-status" class="estado" role="status">…</p>
     </div>
   </main>
 </div>
 ```
 
-- **Izquierda (`.auth-marca`):** fondo `--color-panel`, patrón isométrico que se desvanece y una pila de cubos (clases `cubo-sup/izq/der` y `cubo-acento-*`, colores desde `--cubo-*`). El SVG es decorativo (`aria-hidden`). El marcado completo está en `frontend/src/index.html`.
-- **Derecha (`.auth-panel`):** formulario sin tarjeta, ancho máximo 24 rem, botón `btn-grande`.
-- **Móvil (hasta 899 px):** solo una franja de marca arriba (logo y nombre) y el formulario debajo. El titular, los beneficios y los cubos se ocultan.
-- **Desde 900 px:** dos columnas (1.1 : 1).
-- La página de registro usa la misma estructura `.auth` con otro formulario.
+Plantilla de un formulario (dentro de `#vista`):
+
+```html
+<h1>Iniciar sesión</h1>
+<p class="auth-subtitulo">Ingresa para gestionar tu inventario.</p>
+<form id="form-login" novalidate>
+  <div class="campo">
+    <label for="email">Correo electrónico</label>
+    <div class="campo-control">
+      <svg class="icono" aria-hidden="true" focusable="false"><use href="/iconos.svg#i-correo" /></svg>
+      <input type="email" id="email" name="email" … />
+    </div>
+    <p class="error" id="error-email" aria-live="polite"></p>
+  </div>
+  <div class="campo">
+    <label for="password">Clave</label>
+    <div class="campo-control campo-clave">
+      <svg class="icono" …><use href="/iconos.svg#i-candado" /></svg>
+      <input type="password" id="password" … />
+      <button type="button" class="btn-icono ver-clave" data-objetivo="password" aria-label="Mostrar clave">
+        <svg class="icono" …><use href="/iconos.svg#i-ojo" /></svg>
+      </button>
+    </div>
+    <p class="error" id="error-password" aria-live="polite"></p>
+  </div>
+  <button type="submit" class="btn btn-primario btn-grande btn-bloque">Entrar <svg class="icono" …>…i-flecha…</svg></button>
+</form>
+<p class="auth-alterno">¿No tienes cuenta? <a href="#/registro">Registrar</a></p>
+```
+
+- **Izquierda (`.auth-marca`):** fondo `--color-panel` con bordes redondeados, patrón isométrico que se desvanece, resplandor ámbar, torre de cubos (`cubo-sup/izq/der`, `cubo-acento-*`, colores desde `--cubo-*`) y fichas flotantes de vidrio (`.auth-ficha`). Todo decorativo (`aria-hidden`).
+- **Derecha (`.auth-panel`):** el formulario va en tarjeta (`.auth-formulario`, ancho máximo 26 rem) con animación de entrada.
+- **`.campo-control`:** campo con icono a la izquierda. Con `.campo-clave` además lleva el botón `.ver-clave` a la derecha; `js/app.js` alterna el tipo del input, el icono (`i-ojo` ↔ `i-ojo-tachado`) y el `aria-label` (Mostrar/Ocultar clave).
+- **Móvil (hasta 899 px):** solo una franja de marca arriba (logo y nombre) y el formulario debajo. El titular y la escena se ocultan.
+- **Desde 900 px:** dos columnas (1.1 : 1). Con poca altura (≤ 700 px) se oculta la escena y se compactan los espacios.
+- El registro usa la misma tarjeta con los campos nombre (`i-usuario`), correo, clave y confirmar clave.
+- **Pendiente del equipo:** las rutas usan hash (`#/login`, `#/registro`); el contrato (§1.2) pide History API (`/login`, `/registro`) con las vistas en `js/auth.js`.
 
 ## 7. Estructura de la aplicación (`app.css`)
 
