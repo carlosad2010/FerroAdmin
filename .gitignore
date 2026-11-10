@@ -1,0 +1,5 @@
+# Variables de entorno: contienen configuración local o secretos, nunca se suben.
+# Se sube solo la plantilla (.env.example), que documenta qué variables hacen falta.
+.env
+.env.*
+!.env.example
