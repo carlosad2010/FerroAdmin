@@ -1,0 +1,279 @@
+/* ==========================================================================
+   FerroAdmin · Estructura de la aplicación interna (panel, inventario…)
+   Barra lateral + barra superior + contenido. Mobile-first:
+   hasta 1023px la barra lateral es una franja horizontal arriba.
+   ========================================================================== */
+
+.app {
+  min-height: 100vh;
+  background: var(--color-fondo);
+}
+
+/* --- Barra lateral ------------------------------------------------------- */
+
+.app-lateral {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--espacio-2) var(--espacio-3);
+  padding: var(--espacio-2) var(--espacio-3);
+  color: var(--color-lateral-texto);
+  background: var(--color-lateral);
+}
+
+.app-lateral .marca-lema { display: none; }
+.app-lateral .marca-nombre { font-size: var(--texto-lg); }
+.app-lateral .marca-logo { width: 2rem; height: 2rem; }
+
+.app-lateral > nav { order: 3; flex-basis: 100%; overflow-x: auto; }
+
+.app-nav {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: var(--espacio-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.app-nav a,
+.app-salir {
+  display: flex;
+  white-space: nowrap;
+  align-items: center;
+  gap: 0.75rem;
+  min-height: var(--alto-control);
+  padding: 0 0.75rem;
+  font-weight: 600;
+  color: var(--color-lateral-texto);
+  text-decoration: none;
+  border-radius: var(--radio-md);
+}
+
+.app-nav a:hover,
+.app-salir:hover { background: var(--color-lateral-activo); }
+
+/* Ítem activo: fondo más claro e icono ámbar (sin barras de color) */
+.app-nav a[aria-current="page"] { background: var(--color-lateral-activo); }
+.app-nav a[aria-current="page"] .icono { color: var(--color-acento); }
+
+.app-salir { order: 2; margin-left: auto; background: transparent; border: 0; font: inherit; font-weight: 600; cursor: pointer; }
+
+.app-lateral :focus-visible {
+  outline-color: var(--color-lateral-texto);
+  box-shadow: none;
+}
+
+/* --- Zona de contenido --------------------------------------------------- */
+
+.app-principal { min-width: 0; }
+
+.app-superior {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  min-height: var(--alto-superior);
+  padding: var(--espacio-2) var(--espacio-3);
+  background: var(--color-tarjeta);
+  border-bottom: 1px solid var(--color-borde);
+}
+
+.buscador {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+  max-width: 30rem;
+  min-height: 2.75rem;
+  padding: 0 0.875rem;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo-hundido);
+  border: 1.5px solid transparent;
+  border-radius: var(--radio-md);
+}
+
+.buscador:focus-within { background: var(--color-tarjeta); border-color: var(--color-borde-campo); }
+
+.buscador input {
+  flex: 1;
+  min-width: 0;
+  min-height: 2.5rem;
+  padding: 0;
+  font: inherit;
+  color: var(--color-texto);
+  background: transparent;
+  border: 0;
+}
+
+.buscador input::placeholder { color: var(--color-texto-suave); }
+.buscador input:focus-visible { outline: none; box-shadow: none; }
+
+.app-usuario {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex: none;
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.app-usuario-nombre { display: none; }
+
+.avatar {
+  display: inline-grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: var(--texto-sm);
+  font-weight: 700;
+  color: var(--color-sobre-primario);
+  background: var(--color-primario);
+  border-radius: 50%;
+}
+
+.app-contenido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espacio-4);
+  padding: var(--espacio-4) var(--espacio-3);
+}
+
+.cabecera-pagina h1 { margin-bottom: var(--espacio-1); }
+.cabecera-pagina p { margin: 0; color: var(--color-texto-suave); }
+
+/* --- Indicadores (KPI) --------------------------------------------------- */
+
+.indicadores {
+  display: grid;
+  gap: var(--espacio-3);
+}
+
+.indicador {
+  display: flex;
+  align-items: center;
+  gap: var(--espacio-3);
+  padding: var(--espacio-3) var(--espacio-4);
+  background: var(--color-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-lg);
+  box-shadow: var(--sombra-sm);
+}
+
+.indicador-icono {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  color: var(--color-primario);
+  background: var(--color-primario-fondo);
+  border-radius: var(--radio-lg);
+}
+.indicador-icono .icono { width: 1.75rem; height: 1.75rem; }
+.indicador-icono-ok { color: var(--color-exito-texto); background: var(--color-exito-fondo); }
+.indicador-icono-aviso { color: var(--color-aviso-texto); background: var(--color-acento-fondo); }
+
+.indicador-etiqueta { margin: 0; font-size: var(--texto-sm); font-weight: 500; color: var(--color-texto-suave); }
+
+.indicador-valor {
+  margin: 0;
+  font-size: var(--texto-cifra);
+  font-weight: var(--peso-titulo);
+  line-height: 1.1;
+  letter-spacing: var(--ajuste-titulo);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Secciones del panel ------------------------------------------------- */
+
+.panel-columnas { display: grid; gap: var(--espacio-4); align-items: start; }
+.panel-columnas > * { min-width: 0; }
+
+.seccion { padding: var(--espacio-4); }
+
+.seccion-cabecera {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+}
+.seccion-cabecera h2 { margin: 0; }
+
+.herramientas {
+  display: grid;
+  gap: var(--espacio-2);
+  margin-bottom: var(--espacio-3);
+}
+.herramientas .campo { margin: 0; }
+.herramientas .campo input,
+.herramientas .campo select { min-height: 2.75rem; }
+
+.lista-alertas { margin: 0; padding: 0; list-style: none; }
+
+.lista-alertas li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  padding: 0.75rem 0;
+  font-weight: 600;
+  border-bottom: 1px solid var(--color-borde);
+}
+.lista-alertas li:last-child { border-bottom: 0; }
+
+.titulo-aviso { display: flex; align-items: center; gap: var(--espacio-2); color: var(--color-aviso-texto); }
+
+/* --- Tablet ---------------------------------------------------------------- */
+
+@media (min-width: 640px) {
+  .indicadores { grid-template-columns: repeat(3, 1fr); }
+  .indicador { flex-direction: row; }
+  .app-usuario-nombre { display: inline; }
+  .herramientas { grid-template-columns: 1fr 14rem; }
+  .app-superior,
+  .app-lateral { padding-inline: var(--espacio-4); }
+  .app-contenido { padding: var(--espacio-5) var(--espacio-4); }
+}
+
+/* --- Escritorio: la barra lateral pasa a columna fija ---------------------- */
+
+@media (min-width: 1024px) {
+  .app { display: grid; grid-template-columns: var(--ancho-lateral) minmax(0, 1fr); }
+
+  .app-lateral {
+    position: sticky;
+    top: 0;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: stretch;
+    gap: var(--espacio-5);
+    height: 100vh;
+    padding: var(--espacio-4) var(--espacio-3);
+    overflow-y: auto;
+  }
+
+  .app-lateral .marca { padding-inline: var(--espacio-2); }
+  .app-lateral .marca-lema { display: block; }
+  .app-lateral .marca-nombre { font-size: var(--texto-xl); }
+  .app-lateral .marca-logo { width: 2.5rem; height: 2.5rem; }
+
+  .app-lateral > nav { order: 0; flex-basis: auto; overflow: visible; }
+  .app-salir { order: 0; }
+  .app-nav { flex-direction: column; }
+  .app-nav a { font-size: var(--texto-base); }
+
+  .app-salir {
+    width: 100%;
+    margin: auto 0 0;
+    border-top: 1px solid var(--color-lateral-linea);
+    border-radius: 0;
+    padding-block: var(--espacio-3);
+  }
+
+  .app-superior { padding-inline: var(--espacio-5); }
+  .app-contenido { padding: var(--espacio-5); }
+  .panel-columnas { grid-template-columns: minmax(0, 1fr) 19rem; }
+}

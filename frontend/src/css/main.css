@@ -1,29 +1,10 @@
-:root {
-  font-family: system-ui, sans-serif;
-  color: #1f2937;
-  background: #f5f6f8;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-}
+/* ==========================================================================
+   FerroAdmin · Punto de entrada de estilos (Vite empaqueta los @import)
+   Guía: GUIA_VISUAL.md
+   ========================================================================== */
 
-body {
-  min-width: 320px;
-  min-height: 100vh;
-  margin: 0;
-  display: grid;
-  place-items: center;
-}
-
-.app {
-  padding: 2rem;
-  text-align: center;
-}
-
-h1 {
-  margin-bottom: 0.5rem;
-}
-
-#api-status {
-  margin-top: 2rem;
-  color: #475569;
-}
+@import "./tokens.css";
+@import "./base.css";
+@import "./componentes.css";
+@import "./auth.css";
+@import "./app.css";

@@ -1,4 +1,4 @@
-const status = document.querySelector("#api-status");
+const apiStatus = document.querySelector("#api-status");
 
 async function checkServer() {
   try {
@@ -8,12 +8,14 @@ async function checkServer() {
     }
 
     const result = await response.json();
-    status.textContent =
-      result.status === "ok"
-        ? "Servidor conectado"
-        : "El servidor respondió con un estado inesperado";
+    const conectado = result.status === "ok";
+    apiStatus.dataset.estado = conectado ? "ok" : "error";
+    apiStatus.textContent = conectado
+      ? "Servidor conectado"
+      : "El servidor respondió con un estado inesperado";
   } catch (error) {
-    status.textContent = `No se pudo conectar con el servidor: ${error.message}`;
+    apiStatus.dataset.estado = "error";
+    apiStatus.textContent = `No se pudo conectar con el servidor: ${error.message}`;
   }
 }
 

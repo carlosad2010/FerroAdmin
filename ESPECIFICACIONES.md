@@ -18,6 +18,21 @@ Desarrollar una aplicación web interactiva (SPA) full-stack para la gestión de
 
 ---
 
+## 🎨 Paleta de colores
+
+| Color | Hex | Uso |
+|---|---|---|
+| Azul oscuro | `#172B4D` | Color principal: barra superior, botones principales, títulos y texto |
+| Ámbar | `#F59E0B` | Acento: elemento activo, resaltados y acción destacada |
+| Fondo | `#F8FAFC` | Fondo general de la página |
+| Tarjetas | `#FFFFFF` | Tarjetas, tabla, formularios y modales |
+| Éxito | `#16A34A` | Mensajes de confirmación |
+| Error | `#DC2626` | Mensajes de error y acciones de eliminar |
+
+Los nombres de las variables CSS y las reglas de contraste están en el §1.4 de `CONTRATO_API.md`. Los componentes compartidos (botones, campos, tablas, login de pantalla dividida, barra lateral, etc.) están en `GUIA_VISUAL.md`.
+
+---
+
 ## 📐 Módulos del Sistema
 
 ### 1. Módulo de Seguridad y Autenticación
@@ -48,6 +63,8 @@ Desarrollar una aplicación web interactiva (SPA) full-stack para la gestión de
 sistema-inventario/
 ├── .gitignore
 ├── ESPECIFICACIONES.md
+├── CONTRATO_API.md
+├── GUIA_VISUAL.md
 ├── backend/
 │   ├── config/
 │   ├── controllers/
@@ -62,9 +79,17 @@ sistema-inventario/
 │   └── server.js
 └── frontend/
     ├── src/
-    │   ├── css/         # Estilos del Dashboard y Login
+    │   ├── css/         # Estilos (ver GUIA_VISUAL.md)
+    │   │   ├── main.css         # Punto de entrada: importa los demás
+    │   │   ├── tokens.css       # Variables: paleta, tipografía, espaciado, tema oscuro opcional
+    │   │   ├── base.css         # Reset, tipografía, enlaces, foco
+    │   │   ├── componentes.css  # Botones, campos, mensajes, tablas, iconos, modal
+    │   │   ├── auth.css         # Login y registro: pantalla dividida
+    │   │   └── app.css          # Estructura interna: barra lateral, barra superior, indicadores
     │   ├── js/          # Módulos del frontend
-    │   ├── index.html   # Entrada de la SPA
+    │   ├── public/
+    │   │   └── iconos.svg       # Sprite de iconos y logo (se sirve en /iconos.svg)
+    │   ├── index.html   # Única página de la SPA
     │   ├── package.json
     ├── package-lock.json
     └── vite.config.js

@@ -76,6 +76,43 @@ Una sola página (`index.html`) con un enrutador propio basado en History API (`
 
 `vite build` genera el frontend. Express lo sirve con `express.static` y, **después** de las rutas `/api`, devuelve `index.html` para cualquier otra ruta `GET`, para que el enrutador del frontend decida qué mostrar (incluida la 404).
 
+### 1.4 Paleta de colores
+
+Todos los colores del frontend salen de estas variables CSS, declaradas una sola vez en el bloque `:root` de `frontend/src/css/tokens.css`. Las hojas de estilo no usan códigos hexadecimales sueltos.
+
+| Variable | Color | Hex | Uso |
+|---|---|---|---|
+| `--color-primario` | Azul oscuro | `#172B4D` | Barra superior, botones principales, títulos y texto principal |
+| `--color-acento` | Ámbar | `#F59E0B` | Elemento activo o seleccionado, resaltados y acción destacada (por ejemplo, "Nuevo producto") |
+| `--color-fondo` | Fondo | `#F8FAFC` | Fondo general de la página |
+| `--color-tarjeta` | Tarjetas | `#FFFFFF` | Tarjetas, tabla de productos, formularios y ventanas modales |
+| `--color-exito` | Éxito | `#16A34A` | Confirmaciones: producto creado o actualizado, registro exitoso |
+| `--color-error` | Error | `#DC2626` | Mensajes de error (incluidos los `#error-<campo>` del §3.2) y botón Eliminar |
+
+```css
+:root {
+  --color-primario: #172B4D;
+  --color-acento: #F59E0B;
+  --color-fondo: #F8FAFC;
+  --color-tarjeta: #FFFFFF;
+  --color-exito: #16A34A;
+  --color-error: #DC2626;
+}
+```
+
+Contraste (WCAG AA pide 4.5:1 para texto normal y 3:1 para texto grande, es decir 24 px, o 19 px en negrita):
+
+| Combinación | Contraste | Uso |
+|---|---|---|
+| Azul oscuro sobre tarjeta, o blanco sobre azul oscuro | 14.1:1 | Cualquier texto |
+| Azul oscuro sobre fondo | 13.5:1 | Cualquier texto |
+| Azul oscuro sobre ámbar | 6.6:1 | Texto de botones y etiquetas ámbar |
+| Blanco sobre ámbar | 2.2:1 | ❌ No usar: el texto sobre ámbar va en azul oscuro |
+| Blanco sobre error, o error sobre tarjeta | 4.8:1 | Cualquier texto |
+| Blanco sobre éxito, o éxito sobre tarjeta | 3.3:1 | Solo texto grande o en negrita, o acompañado de un ícono. Para texto normal usar `--color-exito-texto` |
+
+La paleta no incluye ningún gris. El texto secundario, los bordes, los estados hover y las versiones oscuras para texto (`--color-texto-suave`, `--color-borde`, `--color-exito-texto`, `--color-error-texto`, etc.) se **derivan** de estos 6 colores con `color-mix()` en `frontend/src/css/tokens.css`. Todos los detalles, componentes y reglas están en `GUIA_VISUAL.md`.
+
 ---
 
 ## 2. Convenciones generales
@@ -479,6 +516,7 @@ Errores: `400 VALIDACION`, `401`, `404 NO_ENCONTRADO`.
 | 4 | `frontend/src/index.html` | El enlace de registro apunta a `/registro.html` | Cambiarlo a `/registro` (ruta de la SPA) |
 | 5 | `frontend/vite.config.js` | Con `root: src`, el build sale en `frontend/src/dist/`, que hoy está versionado (el `.gitignore` solo excluye `frontend/dist/`) | Agregar `build: { outDir: "../dist", emptyOutDir: true }` y sacar `frontend/src/dist/` del repositorio |
 | 6 | `backend/.env.example` | Faltan variables | Agregar `JWT_SECRET`, `JWT_EXPIRA` y `NODE_ENV` (§1.1) |
+| 7 | `frontend/src/css/main.css` e `index.html` | Usaban colores que no son de la paleta (`#a5c0e7`, `#f5f6f8`, `#1f2937`, `#475569`) | ✅ Hecho: las variables están en `css/tokens.css` y ningún CSS usa colores sueltos. El `<meta name="theme-color">` no admite variables CSS: ahí va `#F8FAFC` |
 
 ---
 
