@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" style="display:none">
+  <!-- Sprite de iconos de línea (24x24, trazo 1.75, color heredado con currentColor).
+       Uso: <svg class="icono" aria-hidden="true"><use href="/iconos.svg#i-caja"/></svg> -->
+  <symbol id="i-panel" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><rect x="13.5" y="13.5" width="7" height="7" rx="2"/></symbol>
+  <symbol id="i-caja" viewBox="0 0 24 24"><path d="M12 3 20 7.5v9L12 21 4 16.5v-9Z"/><path d="m4 7.5 8 4.5 8-4.5M12 12v9"/></symbol>
+  <symbol id="i-etiqueta" viewBox="0 0 24 24"><path d="M3.5 12.2V4.5a1 1 0 0 1 1-1h7.7l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-6.4 6.4a1.5 1.5 0 0 1-2.1 0Z"/><circle cx="8" cy="8" r="1.4"/></symbol>
+  <symbol id="i-buscar" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4.5 4.5"/></symbol>
+  <symbol id="i-campana" viewBox="0 0 24 24"><path d="M6 16.5V11a6 6 0 1 1 12 0v5.5l1.5 1.5h-15Z"/><path d="M10 21h4"/></symbol>
+  <symbol id="i-alerta" viewBox="0 0 24 24"><path d="M12 3.5 21.5 20h-19Z"/><path d="M12 10v4.5M12 17.2v.1"/></symbol>
+  <symbol id="i-ok" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="m8 12.5 3 3 5-6"/></symbol>
+  <symbol id="i-mas" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+  <symbol id="i-editar" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16Z"/></symbol>
+  <symbol id="i-eliminar" viewBox="0 0 24 24"><path d="M4.5 7h15M9.5 7V4.5h5V7M6.5 7l1 13h9l1-13"/></symbol>
+  <symbol id="i-salir" viewBox="0 0 24 24"><path d="M9 4.5H5.5a1 1 0 0 0-1 1v13a1 1 0 0 0 1 1H9M15 8l4 4-4 4M19 12H9.5"/></symbol>
+  <symbol id="i-flecha" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+  <symbol id="i-pulso" viewBox="0 0 24 24"><path d="M3 12h4l3-7 4 14 3-7h4"/></symbol>
+  <symbol id="i-intercambio" viewBox="0 0 24 24"><path d="M5 8h13l-3-3M19 16H6l3 3"/></symbol>
+  <symbol id="i-correo" viewBox="0 0 24 24"><path d="M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9A1.5 1.5 0 0 1 18.5 18h-13A1.5 1.5 0 0 1 4 16.5Z"/><path d="m5 8 7 5 7-5"/></symbol>
+  <symbol id="i-candado" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7.5a4 4 0 1 1 8 0V10"/></symbol>
+  <symbol id="i-usuario" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-ojo" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-ojo-tachado" viewBox="0 0 24 24"><path d="M9.9 5.8A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.6 3.4M6.6 6.9C4 8.6 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4.4-1.1M9.9 9.9a3 3 0 0 0 4.2 4.2M3.5 3.5l17 17"/></symbol>
+  <!-- Logo provisional: cubo isométrico en tres tonos de ámbar -->
+  <symbol id="logo" viewBox="0 0 40 40"><path d="M20 3.5 34.5 12 20 20.5 5.5 12Z" fill="var(--color-acento)"/><path d="M5.5 12 20 20.5V37L5.5 28.5Z" fill="var(--cubo-acento-izquierda)"/><path d="M34.5 12V28.5L20 37V20.5Z" fill="var(--cubo-acento-derecha)"/></symbol>
+</svg>

@@ -17,6 +17,51 @@
   padding: var(--espacio-4) var(--espacio-3);
 }
 
+<<<<<<< HEAD
+=======
+/* --- Iconos (sprite /iconos.svg) ---------------------------------------- */
+
+.icono {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.icono-sm { width: 1rem; height: 1rem; }
+
+/* --- Marca (logo + nombre) ---------------------------------------------- */
+
+.marca {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--color-lateral-texto);
+  text-decoration: none;
+}
+
+.marca-logo { flex: none; width: 2.5rem; height: 2.5rem; }
+
+.marca-nombre {
+  display: block;
+  font-size: var(--texto-xl);
+  font-weight: var(--peso-titulo);
+  line-height: 1.1;
+  letter-spacing: -0.01em;
+}
+
+.marca-lema {
+  display: block;
+  font-size: var(--texto-xs);
+  font-weight: 500;
+  color: var(--color-lateral-suave);
+}
+
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 /* --- Tarjetas ----------------------------------------------------------- */
 
 .tarjeta {
@@ -24,6 +69,7 @@
   background: var(--color-tarjeta);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-lg);
+<<<<<<< HEAD
   box-shadow: var(--sombra-md);
 }
 
@@ -51,6 +97,14 @@
 @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
   .auth-tarjeta {
     background: var(--color-tarjeta);
+=======
+  box-shadow: var(--sombra-sm);
+}
+
+@media (min-width: 640px) {
+  .tarjeta {
+    padding: var(--espacio-4) var(--espacio-4);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   }
 }
 
@@ -87,6 +141,7 @@
 
 .btn-primario {
   background: var(--color-primario);
+<<<<<<< HEAD
   color: var(--color-tarjeta);
 }
 .btn-primario:hover:not(:disabled) { background: var(--color-primario-hover); }
@@ -95,12 +150,26 @@
 .btn-acento {
   background: var(--color-acento);
   color: var(--color-primario);
+=======
+  color: var(--color-sobre-primario);
+}
+.btn-primario:hover:not(:disabled) { background: var(--color-primario-hover); }
+
+/* Texto azul oscuro sobre ámbar (6.6:1). Nunca blanco: solo 2.2:1 */
+.btn-acento {
+  background: var(--color-acento);
+  color: var(--color-sobre-acento);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 .btn-acento:hover:not(:disabled) { background: var(--color-acento-hover); }
 
 .btn-peligro {
   background: var(--color-error);
+<<<<<<< HEAD
   color: var(--color-tarjeta);
+=======
+  color: var(--color-sobre-error);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 .btn-peligro:hover:not(:disabled) { background: var(--color-error-hover); }
 
@@ -110,12 +179,66 @@
   border-color: var(--color-borde-campo);
 }
 .btn-secundario:hover:not(:disabled) {
+<<<<<<< HEAD
   background: var(--color-fondo);
   border-color: var(--color-primario);
 }
 
 .btn-bloque {
   width: 100%;
+=======
+  background: var(--color-fondo-hundido);
+  border-color: var(--color-primario);
+}
+
+/* Botón discreto, para acciones terciarias */
+.btn-fantasma {
+  background: transparent;
+  color: var(--color-texto-suave);
+}
+.btn-fantasma:hover:not(:disabled) {
+  background: var(--color-fondo-hundido);
+  color: var(--color-texto);
+}
+
+.btn-grande { min-height: 3.25rem; padding: 0 var(--espacio-4); font-size: var(--texto-lg); }
+.btn-pequeno { min-height: 2.25rem; padding: 0 0.75rem; font-size: var(--texto-sm); }
+.btn-bloque { width: 100%; }
+
+/* Botón cuadrado solo con icono: lleva aria-label obligatorio */
+.btn-icono {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0;
+  color: var(--color-texto-suave);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-md);
+  cursor: pointer;
+  transition: background-color var(--transicion), color var(--transicion);
+}
+.btn-icono:hover { color: var(--color-texto); background: var(--color-fondo-hundido); }
+
+/* Punto numérico de notificaciones */
+.btn-icono[data-cuenta]::after {
+  content: attr(data-cuenta);
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 1.125rem;
+  height: 1.125rem;
+  padding: 0 0.25rem;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  line-height: 1.125rem;
+  text-align: center;
+  color: var(--color-sobre-error);
+  background: var(--color-error);
+  border-radius: var(--radio-pildora);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 
 /* --- Formularios -------------------------------------------------------- */
@@ -137,8 +260,13 @@
 .campo select,
 .campo textarea {
   width: 100%;
+<<<<<<< HEAD
   min-height: var(--alto-control);
   padding: var(--espacio-2) 0.75rem;
+=======
+  min-height: 3rem;
+  padding: var(--espacio-2) 0.875rem;
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   font: inherit;
   font-size: 1rem; /* 16 px: evita el zoom automático de iOS */
   color: var(--color-texto);
@@ -148,6 +276,19 @@
   transition: border-color var(--transicion);
 }
 
+<<<<<<< HEAD
+=======
+.campo select {
+  padding-right: 2.5rem;
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%),
+    linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 1.25rem) 50%, calc(100% - 0.9rem) 50%;
+  background-size: 0.35rem 0.35rem;
+  background-repeat: no-repeat;
+}
+
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 .campo textarea {
   min-height: 6rem;
   resize: vertical;
@@ -178,7 +319,11 @@
 
 .campo :disabled {
   color: var(--color-texto-suave);
+<<<<<<< HEAD
   background: var(--color-fondo);
+=======
+  background: var(--color-fondo-hundido);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   cursor: not-allowed;
 }
 
@@ -204,16 +349,25 @@ form > .error {
 
 .mensaje {
   --mensaje-color: var(--color-primario);
+<<<<<<< HEAD
   --mensaje-fondo: var(--color-fondo);
+=======
+  --mensaje-fondo: var(--color-fondo-hundido);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   display: flex;
   gap: var(--espacio-2);
   margin-bottom: var(--espacio-3);
   padding: 0.75rem var(--espacio-3);
   color: var(--color-texto);
   background: var(--mensaje-fondo);
+<<<<<<< HEAD
   border: 1px solid var(--color-borde);
   border-left: 4px solid var(--mensaje-color);
   border-radius: var(--radio-md);
+=======
+  border: 1px solid color-mix(in srgb, var(--mensaje-color) 35%, transparent);
+  border-radius: var(--radio-lg);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 
 .mensaje::before {
@@ -237,6 +391,7 @@ form > .error {
 .mensaje-error::before { content: "✖"; content: "✖" / ""; }
 
 .mensaje-aviso {
+<<<<<<< HEAD
   --mensaje-color: var(--color-primario);
   --mensaje-fondo: var(--color-acento-fondo);
   border-left-color: var(--color-acento);
@@ -253,21 +408,67 @@ form > .error {
 .estado[data-estado="error"] { color: var(--color-error-texto); font-weight: 600; }
 .estado[data-estado="ok"]::before { content: "✔\00a0"; content: "✔\00a0" / ""; }
 .estado[data-estado="error"]::before { content: "✖\00a0"; content: "✖\00a0" / ""; }
+=======
+  --mensaje-color: var(--color-aviso-texto);
+  --mensaje-fondo: var(--color-acento-fondo);
+}
+.mensaje-aviso::before { content: "!"; content: "!" / ""; }
+
+/* Estado de conexión con el servidor (#api-status): píldora con símbolo */
+.estado {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: var(--espacio-2);
+  margin: var(--espacio-4) 0 0;
+  padding: 0.375rem 0.75rem;
+  font-size: var(--texto-sm);
+  line-height: 1.4;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo-hundido);
+  border-radius: var(--radio-lg);
+}
+.estado[data-estado="ok"] { color: var(--color-exito-texto); background: var(--color-exito-fondo); font-weight: 600; }
+.estado[data-estado="error"] { color: var(--color-error-texto); background: var(--color-error-fondo); font-weight: 600; }
+.estado[data-estado="ok"]::before { content: "✔"; content: "✔" / ""; }
+.estado[data-estado="error"]::before { content: "✖"; content: "✖" / ""; }
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
 /* --- Insignias (stock) -------------------------------------------------- */
 
 .insignia {
+<<<<<<< HEAD
   display: inline-block;
   padding: 0.125rem 0.625rem;
+=======
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.125rem 0.75rem;
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   font-size: var(--texto-sm);
   font-weight: 600;
   line-height: 1.5;
   white-space: nowrap;
+<<<<<<< HEAD
   border: 1px solid currentColor;
   border-radius: 999px;
 }
 .insignia-ok { color: var(--color-exito-texto); background: var(--color-exito-fondo); }
 .insignia-bajo { color: var(--color-primario); background: var(--color-acento-fondo); border-color: var(--color-acento); }
+=======
+  border: 1px solid transparent;
+  border-radius: var(--radio-pildora);
+}
+.insignia::before {
+  content: "";
+  width: 0.375rem;
+  height: 0.375rem;
+  background: currentColor;
+  border-radius: 50%;
+}
+.insignia-ok { color: var(--color-exito-texto); background: var(--color-exito-fondo); }
+.insignia-bajo { color: var(--color-aviso-texto); background: var(--color-acento-fondo); }
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 .insignia-agotado { color: var(--color-error-texto); background: var(--color-error-fondo); }
 
 /* --- Tabla de inventario ------------------------------------------------ */
@@ -299,17 +500,35 @@ form > .error {
 }
 
 .tabla thead th {
+<<<<<<< HEAD
   font-size: var(--texto-sm);
   white-space: nowrap;
   color: var(--color-tarjeta);
   background: var(--color-primario);
+=======
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--color-texto-suave);
+  background: var(--color-fondo-hundido);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 
 .tabla tbody tr:last-child td { border-bottom: 0; }
 .tabla tbody tr:hover { background: var(--color-fondo); }
+<<<<<<< HEAD
 .tabla .numero { text-align: right; font-variant-numeric: tabular-nums; }
 .tabla .acciones { white-space: nowrap; }
 .tabla .acciones .btn { min-height: 2.25rem; padding: 0 var(--espacio-2); font-size: var(--texto-sm); }
+=======
+.tabla tbody th, .tabla td:first-child { font-weight: 600; color: var(--color-texto); }
+.tabla .numero { text-align: right; font-variant-numeric: tabular-nums; }
+.tabla .acciones { white-space: nowrap; text-align: right; }
+.tabla .acciones .btn { min-height: 2.25rem; padding: 0 var(--espacio-2); font-size: var(--texto-sm); }
+.tabla .sku { display: block; text-align: inherit; font-family: var(--fuente-mono); font-size: var(--texto-xs); font-weight: 500; color: var(--color-texto-suave); }
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
 /* Móvil: cada fila es una tarjeta; cada <td> necesita data-label="Nombre" */
 @media (max-width: 639.98px) {
@@ -356,11 +575,19 @@ form > .error {
   .tabla .acciones::before { content: none; }
 }
 
+<<<<<<< HEAD
 /* --- Barra superior ----------------------------------------------------- */
 
 .barra {
   color: var(--color-tarjeta);
   background: var(--color-primario);
+=======
+/* --- Barra superior simple (páginas sin barra lateral) ------------------ */
+
+.barra {
+  color: var(--color-lateral-texto);
+  background: var(--color-lateral);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 
 .barra-interior {
@@ -389,18 +616,27 @@ form > .error {
   align-items: center;
   min-height: var(--alto-control);
   padding: 0 0.75rem;
+<<<<<<< HEAD
   color: var(--color-tarjeta);
+=======
+  color: var(--color-lateral-texto);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   text-decoration: none;
   border-radius: var(--radio-md);
 }
 
 .barra a:hover {
+<<<<<<< HEAD
   background: color-mix(in srgb, var(--color-tarjeta) 14%, transparent);
+=======
+  background: var(--color-lateral-activo);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }
 
 /* Elemento activo en ámbar, con texto azul oscuro */
 .barra a[aria-current="page"] {
   font-weight: 600;
+<<<<<<< HEAD
   color: var(--color-primario);
   background: var(--color-acento);
 }
@@ -408,6 +644,15 @@ form > .error {
 /* Sobre fondo azul oscuro el anillo de foco es blanco */
 .barra :focus-visible {
   outline-color: var(--color-tarjeta);
+=======
+  color: var(--color-sobre-acento);
+  background: var(--color-acento);
+}
+
+/* Sobre fondo oscuro el anillo de foco es claro */
+.barra :focus-visible {
+  outline-color: var(--color-lateral-texto);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   box-shadow: none;
 }
 
@@ -420,7 +665,11 @@ form > .error {
   display: grid;
   place-items: center;
   padding: var(--espacio-3);
+<<<<<<< HEAD
   background: color-mix(in srgb, var(--color-primario) 55%, transparent);
+=======
+  background: color-mix(in srgb, var(--color-panel) 65%, transparent);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   -webkit-backdrop-filter: blur(4px);
   backdrop-filter: blur(4px);
 }
@@ -460,7 +709,12 @@ form > .error {
   font-size: clamp(4rem, 15vw, 8rem);
   font-weight: 800;
   line-height: 1;
+<<<<<<< HEAD
   color: var(--color-primario);
   /* sombra decorativa ámbar */
   text-shadow: 0.04em 0.04em 0 var(--color-acento);
+=======
+  letter-spacing: var(--ajuste-titulo);
+  color: var(--color-primario);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 }

@@ -2,10 +2,22 @@
    FerroAdmin · Tokens de diseño (GUIA_VISUAL.md)
    Única fuente de verdad de colores, tipografía, espaciado y efectos.
    Los demás CSS usan estas variables; no escriben colores sueltos.
+<<<<<<< HEAD
    ========================================================================== */
 
 :root {
   /* --- Paleta (CONTRATO_API.md §1.4) ------------------------------------ */
+=======
+   v2: misma paleta oficial (CONTRATO_API.md §1.4), derivados nuevos para la
+   barra lateral, el panel de marca del login y los indicadores, y un tema
+   oscuro OPCIONAL (se activa con <html data-tema="oscuro">).
+   ========================================================================== */
+
+:root {
+  color-scheme: light;
+
+  /* --- Paleta oficial (CONTRATO_API.md §1.4) — NO cambiar sin actualizar el contrato */
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   --color-primario: #172B4D; /* azul oscuro */
   --color-acento: #F59E0B;   /* ámbar */
   --color-fondo: #F8FAFC;
@@ -15,17 +27,26 @@
 
   /* --- Derivados de la paleta (no son colores nuevos) -------------------- */
   --color-texto: var(--color-primario);
+<<<<<<< HEAD
   /* Texto secundario: 10.5:1 sobre blanco */
   --color-texto-suave: color-mix(in srgb, var(--color-primario) 80%, white);
   /* Borde decorativo (tarjetas, separadores de tabla) */
   --color-borde: color-mix(in srgb, var(--color-primario) 18%, white);
   /* Borde de controles (inputs): 4.6:1 sobre blanco, mínimo WCAG 3:1 */
+=======
+  /* Texto secundario: 7.5:1 sobre blanco */
+  --color-texto-suave: color-mix(in srgb, var(--color-primario) 80%, white);
+  /* Borde decorativo (tarjetas, separadores de tabla) */
+  --color-borde: color-mix(in srgb, var(--color-primario) 18%, white);
+  /* Borde de controles (inputs): 3.5:1 sobre blanco (mínimo WCAG 3:1) */
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   --color-borde-campo: color-mix(in srgb, var(--color-primario) 55%, white);
 
   --color-primario-hover: color-mix(in srgb, var(--color-primario) 85%, white);
   --color-acento-hover: color-mix(in srgb, var(--color-acento) 88%, black);
   --color-error-hover: color-mix(in srgb, var(--color-error) 85%, black);
 
+<<<<<<< HEAD
   /* Fondos suaves para mensajes e insignias */
   --color-exito-fondo: color-mix(in srgb, var(--color-exito) 10%, white);
   --color-error-fondo: color-mix(in srgb, var(--color-error) 10%, white);
@@ -38,12 +59,60 @@
 
   /* --- Tipografía --------------------------------------------------------- */
   --fuente: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+=======
+  /* Fondos suaves para mensajes, insignias e iconos de indicadores */
+  --color-exito-fondo: color-mix(in srgb, var(--color-exito) 10%, white);
+  --color-error-fondo: color-mix(in srgb, var(--color-error) 10%, white);
+  --color-acento-fondo: color-mix(in srgb, var(--color-acento) 20%, white);
+  --color-primario-fondo: color-mix(in srgb, var(--color-primario) 12%, white);
+  /* Zonas hundidas: encabezado de tabla, buscador */
+  --color-fondo-hundido: color-mix(in srgb, var(--color-primario) 7%, white);
+
+  /* Versiones oscuras para TEXTO sobre fondos claros */
+  --color-exito-texto: color-mix(in srgb, var(--color-exito) 75%, black);
+  --color-error-texto: color-mix(in srgb, var(--color-error) 80%, black);
+  --color-aviso-texto: color-mix(in srgb, var(--color-acento) 50%, black);
+
+  /* Texto e iconos SOBRE los colores de relleno (cambian en el tema oscuro) */
+  --color-sobre-primario: var(--color-tarjeta);
+  --color-sobre-acento: var(--color-primario);
+  --color-sobre-error: var(--color-tarjeta);
+
+  /* --- Barra lateral y panel de marca (zonas oscuras) -------------------- */
+  --color-lateral: var(--color-primario);
+  --color-lateral-texto: var(--color-tarjeta);
+  /* Texto secundario sobre --color-lateral: 7.6:1 */
+  --color-lateral-suave: color-mix(in srgb, var(--color-tarjeta) 70%, var(--color-primario));
+  --color-lateral-activo: color-mix(in srgb, var(--color-primario) 82%, white);
+  --color-lateral-linea: color-mix(in srgb, var(--color-primario) 88%, white);
+  --color-panel: color-mix(in srgb, var(--color-primario) 62%, black);
+
+  /* Ilustración de cubos del login (tres caras) */
+  --cubo-cara-superior: color-mix(in srgb, var(--color-primario) 68%, white);
+  --cubo-cara-izquierda: color-mix(in srgb, var(--color-primario) 84%, white);
+  --cubo-cara-derecha: var(--color-primario);
+  --cubo-acento-izquierda: color-mix(in srgb, var(--color-acento) 88%, black);
+  --cubo-acento-derecha: color-mix(in srgb, var(--color-acento) 74%, black);
+
+  /* --- Tipografía (fuente del sistema: no se cargan fuentes externas) ------ */
+  --fuente: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --fuente-mono: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Liberation Mono", monospace;
+  --texto-xs: 0.75rem;   /* 12 px */
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   --texto-sm: 0.875rem;  /* 14 px */
   --texto-base: 1rem;    /* 16 px */
   --texto-lg: 1.125rem;  /* 18 px */
   --texto-xl: 1.5rem;    /* 24 px */
   --texto-2xl: clamp(1.75rem, 1.4rem + 1.5vw, 2.25rem); /* 28-36 px */
+<<<<<<< HEAD
   --interlineado: 1.5;
+=======
+  --texto-3xl: clamp(2.25rem, 1.5rem + 3vw, 3.5rem);    /* 36-56 px: titular del login */
+  --texto-cifra: 2.25rem; /* 36 px: cifra de los indicadores */
+  --interlineado: 1.5;
+  --peso-titulo: 800;
+  --ajuste-titulo: -0.02em; /* letter-spacing de títulos grandes */
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
   /* --- Espaciado ---------------------------------------------------------- */
   --espacio-1: 0.25rem;
@@ -52,18 +121,30 @@
   --espacio-4: 1.5rem;
   --espacio-5: 2rem;
   --espacio-6: 3rem;
+<<<<<<< HEAD
+=======
+  --espacio-7: 4rem;
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
   /* --- Forma y sombras ---------------------------------------------------- */
   --radio-sm: 6px;
   --radio-md: 8px;
   --radio-lg: 16px;
+<<<<<<< HEAD
   --sombra-sm: 0 1px 3px color-mix(in srgb, var(--color-primario) 18%, transparent);
   --sombra-md: 0 8px 24px color-mix(in srgb, var(--color-primario) 20%, transparent);
+=======
+  --radio-xl: 20px;
+  --radio-pildora: 999px;
+  --sombra-sm: 0 1px 3px color-mix(in srgb, var(--color-primario) 14%, transparent);
+  --sombra-md: 0 8px 24px color-mix(in srgb, var(--color-primario) 14%, transparent);
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   --sombra-lg: 0 16px 48px color-mix(in srgb, var(--color-primario) 30%, transparent);
 
   /* --- Controles ---------------------------------------------------------- */
   --alto-control: 2.75rem; /* 44 px: área táctil mínima */
 
+<<<<<<< HEAD
   /* --- Foco visible ------------------------------------------------------- */
   --foco-borde: 3px solid var(--color-primario);
   --foco-separacion: 2px;
@@ -74,9 +155,77 @@
   --vidrio-fondo: color-mix(in srgb, var(--color-tarjeta) 78%, transparent);
   --vidrio-borde: color-mix(in srgb, var(--color-tarjeta) 65%, transparent);
 
+=======
+  /* --- Layout de la aplicación -------------------------------------------- */
+  --ancho-lateral: 15.5rem;
+  --alto-superior: 4.5rem;
+
+  /* --- Foco visible ------------------------------------------------------- */
+  --color-foco: var(--color-primario);
+  --foco-borde: 3px solid var(--color-foco);
+  --foco-separacion: 2px;
+  --foco-halo: 0 0 0 6px color-mix(in srgb, var(--color-acento) 45%, transparent);
+
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
   /* --- Transiciones ------------------------------------------------------- */
   --transicion: 150ms ease;
 }
 
+<<<<<<< HEAD
+=======
+/* ==========================================================================
+   Tema oscuro OPCIONAL — se activa con <html data-tema="oscuro">.
+   Extensión de la v2: no forma parte de la paleta del contrato (§1.4).
+   Solo aquí se escriben colores literales del tema oscuro.
+   ========================================================================== */
+:root[data-tema="oscuro"] {
+  color-scheme: dark;
+
+  --color-primario: #DCE6FF;
+  --color-acento: #F59E0B;
+  --color-fondo: #0A1226;
+  --color-tarjeta: #111C38;
+  --color-exito: #4ADE80;
+  --color-error: #F87171;
+
+  --color-texto-suave: #AAB7D8;
+  --color-borde: #26365F;
+  --color-borde-campo: #6577A0;
+  --color-primario-hover: #FFFFFF;
+  --color-acento-hover: #FFB52E;
+  --color-error-hover: #FCA5A5;
+
+  --color-exito-fondo: #0F3A2A;
+  --color-error-fondo: #3D1614;
+  --color-acento-fondo: #3A2A07;
+  --color-primario-fondo: #14284F;
+  --color-fondo-hundido: #0C1630;
+
+  --color-exito-texto: #4ADE9A;
+  --color-error-texto: #FF9A90;
+  --color-aviso-texto: #FFC247;
+
+  --color-sobre-primario: #0A1226;
+  --color-sobre-acento: #172B4D;
+  --color-sobre-error: #1A0A0A;
+
+  --color-lateral: #070E1F;
+  --color-lateral-texto: #D2DBF0;
+  --color-lateral-suave: #93A3C8;
+  --color-lateral-activo: #16264D;
+  --color-lateral-linea: #1B2A50;
+  --color-panel: #070E1F;
+
+  --cubo-cara-superior: #3D63B8;
+  --cubo-cara-izquierda: #2A4A94;
+  --cubo-cara-derecha: #1B3366;
+
+  --color-foco: #8DB8FF;
+  --sombra-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --sombra-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --sombra-lg: 0 16px 48px rgba(0, 0, 0, 0.55);
+}
+
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 /* Puntos de corte (las media queries no aceptan variables):
    móvil: hasta 639.98px · tablet: desde 640px · escritorio: desde 1024px */

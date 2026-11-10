@@ -20,16 +20,23 @@
       <h1 class="texto-centrado">FerroAdmin</h1>
       <p class="texto-centrado texto-suave">Gestión de inventario para ferretería</p>
 
+<<<<<<< HEAD
       <section>
         <h2 class="texto-centrado">Iniciar sesión</h2>
+=======
+     <div id="vista"></div>
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
-        <form id="form-login" novalidate>
-          <div class="campo">
-            <label for="email">Correo electrónico</label>
-            <input type="email" id="email" name="email" autocomplete="email" required />
-            <p class="error" id="error-email" aria-live="polite"></p>
-          </div>
+      <main class="auth-panel">
+        <div class="auth-columna">
+          <!-- js/app.js pinta aquí el login o el registro según la ruta (#/login, #/registro) -->
+          <div id="vista" class="auth-formulario"></div>
+          <p id="api-status" class="estado" role="status">Comprobando conexión con el servidor...</p>
+        </div>
+      </main>
+    </div>
 
+<<<<<<< HEAD
           <div class="campo">
             <label for="password">Clave</label>
             <input type="password" id="password" name="password" autocomplete="current-password" required />
@@ -47,6 +54,9 @@
 
       <p id="api-status" class="estado texto-centrado" role="status">Comprobando conexión con el servidor...</p>
     </main>
+=======
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
     <script type="module" src="/js/main.js"></script>
+    <script type="module" src="/js/app.js"></script>
   </body>
 </html>

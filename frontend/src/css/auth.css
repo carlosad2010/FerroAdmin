@@ -1,0 +1,297 @@
+/* ==========================================================================
+   FerroAdmin · Login y registro: pantalla dividida
+   Izquierda: panel de marca oscuro con patrón isométrico, torre de cubos y
+   fichas flotantes. Derecha: formulario en tarjeta.
+   Mobile-first: en móvil solo hay una franja de marca arriba y el formulario.
+   Solo usa tokens; las animaciones se desactivan con prefers-reduced-motion
+   (base.css).
+   ========================================================================== */
+
+.auth {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  gap: var(--espacio-2);
+  min-height: 100vh;
+  padding: var(--espacio-2);
+  background: var(--color-fondo);
+}
+
+/* --- Panel de marca ----------------------------------------------------- */
+
+.auth-marca {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: var(--espacio-5);
+  padding: var(--espacio-3);
+  overflow: hidden;
+  color: var(--color-lateral-texto);
+  background: var(--color-panel);
+  border-radius: var(--radio-xl);
+}
+
+/* El SVG decorativo va detrás del contenido */
+.auth-arte {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.auth-marca > :not(.auth-arte) { position: relative; }
+
+/* Resplandor ámbar en la esquina inferior */
+.auth-marca > .auth-resplandor {
+  position: absolute;
+  right: -6rem;
+  bottom: -8rem;
+  width: 34rem;
+  height: 34rem;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-acento) 30%, transparent), transparent);
+  pointer-events: none;
+}
+
+.auth-linea { fill: none; stroke: var(--color-lateral-linea); stroke-width: 1; }
+.cubo-sup { fill: var(--cubo-cara-superior); }
+.cubo-izq { fill: var(--cubo-cara-izquierda); }
+.cubo-der { fill: var(--cubo-cara-derecha); }
+.cubo-acento-sup { fill: var(--color-acento); }
+.cubo-acento-izq { fill: var(--cubo-acento-izquierda); }
+.cubo-acento-der { fill: var(--cubo-acento-derecha); }
+
+/* Titular, texto, escena y pie: solo desde tablet */
+.auth-marca-cuerpo,
+.auth-marca-pie,
+.auth-escena { display: none; }
+
+.auth-titular {
+  max-width: 28rem;
+  margin: 0 0 var(--espacio-3);
+  font-size: var(--texto-3xl);
+  font-weight: var(--peso-titulo);
+  line-height: 1.05;
+  letter-spacing: var(--ajuste-titulo);
+  color: var(--color-lateral-texto);
+}
+
+.auth-texto {
+  max-width: 26rem;
+  margin: 0;
+  font-size: var(--texto-lg);
+  line-height: 1.55;
+  color: var(--color-lateral-texto);
+}
+
+.auth-beneficios {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: var(--espacio-4) 0 0;
+  padding: 0;
+  list-style: none;
+  font-weight: 500;
+}
+
+.auth-beneficios li { display: flex; align-items: center; gap: 0.75rem; }
+.auth-beneficios .icono { color: var(--color-acento); }
+
+.auth-marca-pie { font-size: var(--texto-xs); color: var(--color-lateral-suave); }
+
+/* Sobre el panel oscuro los enlaces y el foco usan colores claros */
+.auth-marca :focus-visible {
+  outline-color: var(--color-lateral-texto);
+  box-shadow: none;
+}
+
+/* --- Fichas flotantes (decorativas, dentro de .auth-escena) --------------- */
+
+.auth-ficha {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 1rem 0.625rem 0.625rem;
+  color: var(--color-lateral-texto);
+  background: color-mix(in srgb, var(--color-tarjeta) 9%, transparent);
+  border: 1px solid color-mix(in srgb, var(--color-tarjeta) 18%, transparent);
+  border-radius: var(--radio-lg);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--sombra-lg);
+  animation: flotar 7s ease-in-out infinite alternate;
+}
+
+.auth-ficha strong { display: block; font-size: var(--texto-sm); line-height: 1.2; }
+.auth-ficha small { display: block; font-size: var(--texto-xs); color: var(--color-lateral-suave); }
+
+.auth-ficha-icono {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  color: var(--color-sobre-acento);
+  background: var(--color-acento);
+  border-radius: var(--radio-md);
+}
+
+.auth-ficha-icono-ok { color: var(--color-panel); background: var(--color-exito); }
+.auth-ficha-icono-info { color: var(--color-panel); background: var(--cubo-cara-superior); }
+
+.auth-ficha-1 { top: 4%; left: 0; animation-duration: 6s; }
+.auth-ficha-2 { top: 38%; right: 0; animation-duration: 8s; animation-delay: -2s; }
+.auth-ficha-3 { bottom: 4%; left: 6%; animation-duration: 7s; animation-delay: -4s; }
+
+/* --- Formulario ---------------------------------------------------------- */
+
+.auth-panel {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: var(--espacio-5) var(--espacio-3);
+  overflow: hidden;
+}
+
+/* Resplandor ámbar suave en la esquina superior */
+.auth-panel::before {
+  content: "";
+  position: absolute;
+  top: -10rem;
+  right: -10rem;
+  width: 30rem;
+  height: 30rem;
+  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-acento) 14%, transparent), transparent);
+  pointer-events: none;
+}
+
+.auth-columna {
+  position: relative;
+  width: min(100%, 26rem);
+  animation: aparecer 500ms ease both;
+}
+
+.auth-formulario {
+  width: 100%;
+  padding: var(--espacio-4);
+  background: var(--color-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-xl);
+  box-shadow: var(--sombra-md);
+}
+
+.auth-formulario h1 { margin: 0; font-size: var(--texto-2xl); }
+.auth-subtitulo { margin: var(--espacio-1) 0 var(--espacio-4); color: var(--color-texto-suave); }
+.auth-alterno { margin: var(--espacio-3) 0 0; text-align: center; color: var(--color-texto-suave); }
+.auth .estado { margin-top: var(--espacio-3); }
+
+/* Campo con icono a la izquierda */
+.campo-control {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.campo-control .icono {
+  position: absolute;
+  left: 0.875rem;
+  color: var(--color-texto-suave);
+  pointer-events: none;
+}
+
+.campo-control input { padding-left: 2.75rem; min-height: 3.25rem; }
+.campo-control:focus-within .icono { color: var(--color-primario); }
+
+/* Campo de clave con botón para mostrarla (ojito) a la derecha */
+.campo-clave input { padding-right: 3rem; }
+
+.campo-control .ver-clave {
+  position: absolute;
+  right: 0.375rem;
+}
+
+/* El icono del ojito no se posiciona como el icono de la izquierda */
+.campo-control .ver-clave .icono { position: static; color: inherit; }
+.campo-control .ver-clave:hover { color: var(--color-primario); }
+
+.auth .campo input:focus-visible {
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-acento) 40%, transparent);
+}
+
+/* Botón de envío: sombra y flecha que se desplaza al pasar el ratón */
+.auth-formulario .btn-bloque { margin-top: var(--espacio-2); }
+.auth .btn-primario { box-shadow: 0 10px 22px color-mix(in srgb, var(--color-primario) 26%, transparent); }
+.auth .btn .icono { transition: transform var(--transicion); }
+.auth .btn:hover .icono { transform: translateX(4px); }
+
+/* --- Tablet y escritorio -------------------------------------------------- */
+
+@media (min-width: 900px) {
+  .auth {
+    grid-template-columns: 1.1fr 1fr;
+    grid-template-rows: none;
+    gap: var(--espacio-3);
+    padding: var(--espacio-3);
+  }
+
+  .auth-marca {
+    min-height: calc(100vh - 2rem);
+    padding: var(--espacio-6);
+  }
+
+  .auth-marca-cuerpo,
+  .auth-marca-pie { display: block; }
+
+  .auth-escena {
+    display: block;
+    position: relative;
+    width: min(100%, 34rem);
+    height: 22rem;
+    margin: 0 auto;
+  }
+
+  .auth-torre {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .auth-panel { padding: var(--espacio-5); }
+}
+
+/* Escritorio con poca altura (portátiles pequeños): se compacta todo */
+@media (min-width: 900px) and (max-height: 700px) {
+  .auth {
+    min-height: 100vh;
+    min-height: 100svh;
+  }
+
+  .auth-marca,
+  .auth-panel {
+    min-height: 0;
+    padding: var(--espacio-3);
+  }
+
+  .auth-escena { display: none; }
+  .auth-formulario { padding: var(--espacio-3); }
+  .auth-subtitulo { margin-bottom: var(--espacio-3); }
+  .auth .campo { margin-bottom: var(--espacio-2); }
+  .auth .campo-control input { min-height: var(--alto-control); }
+  .auth form > .error:empty { margin-top: 0; }
+  .auth-alterno,
+  .auth .estado { margin-top: var(--espacio-2); }
+}
+
+/* --- Animaciones ------------------------------------------------------------ */
+
+@keyframes flotar {
+  from { transform: translateY(0); }
+  to { transform: translateY(-10px); }
+}
+
+@keyframes aparecer {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}

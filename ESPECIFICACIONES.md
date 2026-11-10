@@ -29,7 +29,11 @@ Desarrollar una aplicación web interactiva (SPA) full-stack para la gestión de
 | Éxito | `#16A34A` | Mensajes de confirmación |
 | Error | `#DC2626` | Mensajes de error y acciones de eliminar |
 
+<<<<<<< HEAD
 Los nombres de las variables CSS y las reglas de contraste están en el §1.4 de `CONTRATO_API.md`. Los componentes compartidos (botones, campos, tablas, login con difuminado, etc.) están en `GUIA_VISUAL.md`.
+=======
+Los nombres de las variables CSS y las reglas de contraste están en el §1.4 de `CONTRATO_API.md`. Los componentes compartidos (botones, campos, tablas, login de pantalla dividida, barra lateral, etc.) están en `GUIA_VISUAL.md`.
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
 
 ---
 
@@ -81,6 +85,7 @@ sistema-inventario/
     ├── src/
     │   ├── css/         # Estilos (ver GUIA_VISUAL.md)
     │   │   ├── main.css         # Punto de entrada: importa los demás
+<<<<<<< HEAD
     │   │   ├── tokens.css       # Variables: paleta, tipografía, espaciado
     │   │   ├── base.css         # Reset, tipografía, enlaces, foco
     │   │   ├── fondo.css        # Fondo de ondulaciones
@@ -88,6 +93,17 @@ sistema-inventario/
     │   ├── js/          # Módulos del frontend
     │   ├── index.html   # Entrada de la SPA
     │   ├── guia.html    # Muestra viva de la guía visual (solo desarrollo)
+=======
+    │   │   ├── tokens.css       # Variables: paleta, tipografía, espaciado, tema oscuro opcional
+    │   │   ├── base.css         # Reset, tipografía, enlaces, foco
+    │   │   ├── componentes.css  # Botones, campos, mensajes, tablas, iconos, modal
+    │   │   ├── auth.css         # Login y registro: pantalla dividida
+    │   │   └── app.css          # Estructura interna: barra lateral, barra superior, indicadores
+    │   ├── js/          # Módulos del frontend
+    │   ├── public/
+    │   │   └── iconos.svg       # Sprite de iconos y logo (se sirve en /iconos.svg)
+    │   ├── index.html   # Única página de la SPA
+>>>>>>> c53fa010803da289a4c2400d9e945d8323a6169d
     │   ├── package.json
     ├── package-lock.json
     └── vite.config.js
