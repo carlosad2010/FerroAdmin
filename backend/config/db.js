@@ -34,4 +34,8 @@ export async function comprobarConexion() {
       `No se pudo conectar a PostgreSQL (${error.code || "error desconocido"}).`;
     throw new Error(mensaje, { cause: error });
   }
+<<<<<<< HEAD
 }
+=======
+});
+>>>>>>> 08ecc2809dfa974188d5e6a3f4a1eb759a720d5c
