@@ -17,5 +17,6 @@ INSERT INTO productos (nombre, descripcion, id_categoria, stock_actual, stock_mi
 ('Cable eléctrico 2mm', 'Rollo de cable flexible x 10 metros', 'e0eebc99-9c0b-4ef8-bb6d-6bb9bd380a55', 40, 10, 22.00);
 
 INSERT INTO movimientos_inventario (id_producto, id_usuario, tipo_movimiento, cantidad, motivo) 
-SELECT id_producto, (SELECT id_usuario LIMIT 1), 'ENTRADA', 10, 'Carga inicial de inventario'
+SELECT id_producto, (SELECT id_usuario FROM usuarios LIMIT 1), 'ENTRADA', 10, 'Carga inicial de inventario'
 FROM productos;
+
