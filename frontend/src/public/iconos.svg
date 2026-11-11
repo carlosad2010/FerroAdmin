@@ -17,6 +17,9 @@
   <symbol id="i-intercambio" viewBox="0 0 24 24"><path d="M5 8h13l-3-3M19 16H6l3 3"/></symbol>
   <symbol id="i-correo" viewBox="0 0 24 24"><path d="M4 7.5A1.5 1.5 0 0 1 5.5 6h13A1.5 1.5 0 0 1 20 7.5v9A1.5 1.5 0 0 1 18.5 18h-13A1.5 1.5 0 0 1 4 16.5Z"/><path d="m5 8 7 5 7-5"/></symbol>
   <symbol id="i-candado" viewBox="0 0 24 24"><rect x="5" y="10" width="14" height="10" rx="2"/><path d="M8 10V7.5a4 4 0 1 1 8 0V10"/></symbol>
+  <symbol id="i-usuario" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0"/></symbol>
+  <symbol id="i-ojo" viewBox="0 0 24 24"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
+  <symbol id="i-ojo-tachado" viewBox="0 0 24 24"><path d="M9.9 5.8A9.6 9.6 0 0 1 12 5.5c6 0 9.5 6.5 9.5 6.5a17 17 0 0 1-2.6 3.4M6.6 6.9C4 8.6 2.5 12 2.5 12S6 18.5 12 18.5a9 9 0 0 0 4.4-1.1M9.9 9.9a3 3 0 0 0 4.2 4.2M3.5 3.5l17 17"/></symbol>
   <!-- Logo provisional: cubo isométrico en tres tonos de ámbar -->
   <symbol id="logo" viewBox="0 0 40 40"><path d="M20 3.5 34.5 12 20 20.5 5.5 12Z" fill="var(--color-acento)"/><path d="M5.5 12 20 20.5V37L5.5 28.5Z" fill="var(--cubo-acento-izquierda)"/><path d="M34.5 12V28.5L20 37V20.5Z" fill="var(--cubo-acento-derecha)"/></symbol>
 </svg>

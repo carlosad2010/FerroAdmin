@@ -203,6 +203,18 @@
 .campo-control input { padding-left: 2.75rem; min-height: 3.25rem; }
 .campo-control:focus-within .icono { color: var(--color-primario); }
 
+/* Campo de clave con botón para mostrarla (ojito) a la derecha */
+.campo-clave input { padding-right: 3rem; }
+
+.campo-control .ver-clave {
+  position: absolute;
+  right: 0.375rem;
+}
+
+/* El icono del ojito no se posiciona como el icono de la izquierda */
+.campo-control .ver-clave .icono { position: static; color: inherit; }
+.campo-control .ver-clave:hover { color: var(--color-primario); }
+
 .auth .campo input:focus-visible {
   box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-acento) 40%, transparent);
 }
