@@ -5,6 +5,10 @@ dotenv.config();
 
 const { Pool } = pkg;
 
+if (!process.env.DATABASE_URL) {
+  throw new Error("Falta DATABASE_URL en backend/.env (copia .env.example y completa tus datos).");
+}
+
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
 });
