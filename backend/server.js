@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { pool } from './config/db.js';
+import { comprobarConexion } from './config/db.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -43,7 +43,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 5. Iniciar servidor
+// 5. Comprobar PostgreSQL antes de aceptar peticiones (T09)
+try {
+  await comprobarConexion();
+  console.log(' Conexión a PostgreSQL OK');
+} catch (error) {
+  console.error(' Error al conectar a PostgreSQL:', error.message);
+  process.exit(1);
+}
+
+// 6. Iniciar servidor
 app.listen(PORT, () => {
   console.log(` Servidor Express de FerroAdmin corriendo en http://localhost:${PORT}`);
 });
