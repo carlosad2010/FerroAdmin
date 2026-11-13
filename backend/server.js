@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { pool } from './config/db.js';
+import productosRoutes from './routes/productos.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -19,7 +20,7 @@ app.get('/api/health', (req, res) => {
 
 // TODO: Aquí se montarán las rutas del contrato:
 // app.use('/api/auth', authRoutes);
-// app.use('/api/categorias', categoriasRoutes);
+app.use('/api/productos', productosRoutes);
 // app.use('/api/productos', productosRoutes);
 
 // 3. Manejador 404 para rutas de API no encontradas (§3.2 del contrato)
