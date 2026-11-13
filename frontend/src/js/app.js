@@ -1,17 +1,9 @@
-import { obtenerSesion, activarLogin, activarRegistro } from './auth.js';
-import { mostrarInventario } from './inventario.js';
 
+import { activarValidacionRegistro, marcarCampo } from './validaciones.js';
+import { llamarApi } from './api.js';
 const vista = document.getElementById('vista');
 
-// Cascarón de login/registro (está en index.html) y contenedor de las vistas
-// internas (inventario y 404). Solo uno de los dos está en la página a la vez.
-const cascaronAuth = document.querySelector('.auth');
-const cascaronApp = document.createElement('div');
-
-function mostrarCascaron(visible, oculto) {
-  oculto.remove();
-  if (!visible.isConnected) document.body.prepend(visible);
-}
+let avisoLogin = '';
 
 // Icono del sprite /iconos.svg (decorativo: lo oculta del lector de pantalla)
 const icono = (nombre) =>
@@ -24,6 +16,7 @@ const botonOjito = (objetivo) =>
 const plantillaLogin = `
   <h1>Iniciar sesión</h1>
   <p class="auth-subtitulo">Ingresa para gestionar tu inventario.</p>
+  <p id="aviso-exito" role="status" style="color: var(--color-exito);"></p>
 
   <form id="form-login" novalidate>
     <div class="campo">
@@ -109,57 +102,34 @@ function activarOjitos() {
   });
 }
 
-function mostrarAuth(esRegistro) {
-  mostrarCascaron(cascaronAuth, cascaronApp);
-  cascaronApp.innerHTML = '';
+async function enviarRegistro(datos) {
+  const boton = document.querySelector('#form-registro button[type="submit"]');
+  const errorGeneral = document.getElementById('error-general');
+  errorGeneral.textContent = '';
+  boton.disabled = true;
+
+  try {
+    await llamarApi('/auth/registro', { metodo: 'POST', cuerpo: datos });
+    avisoLogin = 'Cuenta creada. Ahora inicia sesión.';
+    location.hash = '#/login';
+  } catch (error) {
+    if (error.codigo === 'CONFLICTO') marcarCampo('email', error.mensaje);
+    else errorGeneral.textContent = error.mensaje;
+  } finally {
+    boton.disabled = false;
+  }
+}
+
+function mostrarVista() {
+  const esRegistro = location.hash === '#/registro';
   vista.innerHTML = esRegistro ? plantillaRegistro : plantillaLogin;
   document.title = esRegistro ? 'Registro | FerroAdmin' : 'Iniciar sesión | FerroAdmin';
   activarOjitos();
-  if (esRegistro) activarRegistro();
-  else activarLogin();
-}
-
-function mostrar404() {
-  mostrarCascaron(cascaronApp, cascaronAuth);
-  document.title = 'Página no encontrada | FerroAdmin';
-  cascaronApp.innerHTML = `
-    <main class="contenedor vista-404">
-      <p class="codigo">404</p>
-      <h1>Página no encontrada</h1>
-      <a class="btn btn-acento" href="#/">Volver al inicio</a>
-    </main>
-  `;
-}
-
-// Cada cambio de ruta recibe un número: si mientras se consulta la sesión
-// el usuario cambia otra vez de ruta, la respuesta vieja se descarta.
-let navegacion = 0;
-
-// Rutas (CONTRATO_API.md §1.2), por ahora con hash: #/login, #/registro, #/inventario.
-async function mostrarVista() {
-  const turno = ++navegacion;
-  const ruta = location.hash.replace(/^#/, '') || '/';
-
-  if (!['/', '/login', '/registro', '/inventario'].includes(ruta)) {
-    mostrar404();
-    return;
-  }
-
-  const usuario = await obtenerSesion();
-  if (turno !== navegacion) return;
-
-  // "/" e "/inventario" requieren sesión; "/login" con sesión va al inventario.
-  if (ruta === '/registro') {
-    mostrarAuth(true);
-  } else if (!usuario) {
-    if (ruta === '/login') mostrarAuth(false);
-    else location.hash = '#/login';
-  } else if (ruta === '/inventario') {
-    mostrarCascaron(cascaronApp, cascaronAuth);
-    document.title = 'Inventario | FerroAdmin';
-    mostrarInventario(cascaronApp, usuario);
+    if (esRegistro) {
+    activarValidacionRegistro(enviarRegistro);
   } else {
-    location.hash = '#/inventario';
+    document.getElementById('aviso-exito').textContent = avisoLogin;
+    avisoLogin = '';
   }
 }
 
