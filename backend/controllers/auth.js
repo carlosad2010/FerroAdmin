@@ -1,4 +1,8 @@
-import { registrarUsuarioService, loginUsuarioService } from '../services/authService.js';
+import {
+  registrarUsuario as registrarUsuarioService,
+  loginUsuario as loginUsuarioService,
+  obtenerUsuario as obtenerUsuarioService
+} from '../services/auth.js';
 
 export const registrarUsuario = async (req, res) => {
   try {
@@ -22,8 +26,9 @@ export const registrarUsuario = async (req, res) => {
     });
 
   } catch (error) {
-    // Manejo de conflicto por email duplicado (PostgreSQL error code 23505)
-    if (error.code === '23505') {
+    // Correo duplicado: lo detecta el servicio (codigo CONFLICTO) o,
+    // si dos registros llegan a la vez, el índice único de PostgreSQL (23505)
+    if (error.codigo === 'CONFLICTO' || error.code === '23505') {
       return res.status(409).json({
         error: {
           codigo: 'CONFLICTO',
@@ -84,6 +89,16 @@ export const loginUsuario = async (req, res) => {
     });
 
   } catch (error) {
+    // El servicio lanza este código si el correo no existe o la clave no coincide
+    if (error.codigo === 'CREDENCIALES_INVALIDAS') {
+      return res.status(401).json({
+        error: {
+          codigo: 'CREDENCIALES_INVALIDAS',
+          mensaje: 'Correo o clave incorrectos'
+        }
+      });
+    }
+
     console.error('Error en login:', error);
     return res.status(500).json({
       error: {
@@ -104,9 +119,25 @@ export const logoutUsuario = (req, res) => {
   return res.sendStatus(204);
 };
 
-export const obtenerMe = async (req, res) => {
-  // Este controlador se usará junto con el middleware verificarToken
-  return res.status(200).json({
-    data: req.usuario
-  });
+export const obtenerMe = async (req, res, next) => {
+  // Se usa junto con el middleware verificarToken, que deja req.usuario = { id }
+  try {
+    const usuario = await obtenerUsuarioService(req.usuario.id);
+
+    // §5.3: también es 401 si el usuario del token ya no existe
+    if (!usuario) {
+      return res.status(401).json({
+        error: {
+          codigo: 'NO_AUTENTICADO',
+          mensaje: 'No se encontró una sesión activa'
+        }
+      });
+    }
+
+    return res.status(200).json({
+      data: usuario
+    });
+  } catch (error) {
+    return next(error);
+  }
 };

@@ -4,6 +4,9 @@ dotenv.config();
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import { comprobarConexion } from './config/db.js';
+import authRoutes from './routes/auth.js';
+import categoriasRoutes from './routes/categorias.js';
+import productosRoutes from './routes/productos.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,10 +20,10 @@ app.get('/api/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
-// TODO: Aquí se montarán las rutas del contrato:
-// app.use('/api/auth', authRoutes);
-// app.use('/api/categorias', categoriasRoutes);
-// app.use('/api/productos', productosRoutes);
+// Rutas del contrato (§5)
+app.use('/api/auth', authRoutes);
+app.use('/api/categorias', categoriasRoutes);
+app.use('/api/productos', productosRoutes);
 
 // 3. Manejador 404 para rutas de API no encontradas (§3.2 del contrato)
 app.use('/api/*', (req, res) => {
@@ -34,6 +37,16 @@ app.use('/api/*', (req, res) => {
 
 // 4. Manejador global de errores normalizado (§3.2)
 app.use((err, req, res, next) => {
+  // JSON mal formado en el cuerpo: es un error del cliente (§3.3), no un 500
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({
+      error: {
+        codigo: 'VALIDACION',
+        mensaje: 'El cuerpo de la petición no es un JSON válido'
+      }
+    });
+  }
+
   console.error(' Error interno no controlado:', err.stack);
   res.status(500).json({
     error: {

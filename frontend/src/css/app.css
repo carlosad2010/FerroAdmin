@@ -211,6 +211,18 @@
 .herramientas .campo input,
 .herramientas .campo select { min-height: 2.75rem; }
 
+/* Pie del listado: resumen ("42 productos · Página 1 de 5") y botones Anterior/Siguiente */
+.paginacion {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--espacio-2);
+  margin-top: var(--espacio-3);
+}
+.paginacion p { margin: 0; }
+.paginacion-botones { display: flex; gap: var(--espacio-2); }
+
 .lista-alertas { margin: 0; padding: 0; list-style: none; }
 
 .lista-alertas li {

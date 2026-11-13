@@ -352,6 +352,7 @@ Para la vista de inventario (renderizada por el JavaScript dentro de `index.html
 - Ítem activo de la barra lateral: `aria-current="page"` (fondo más claro e icono ámbar).
 - Los enlaces de la navegación usan las rutas SPA del contrato §1.2 (`/inventario`), no archivos `.html`.
 - `.lista-alertas`, `.indicadores` y la campana de notificaciones son solo visuales: la lógica es de otras tareas.
+- `.paginacion` va debajo de la tabla: un `<p class="texto-suave">` con el resumen ("42 productos · Página 1 de 5") y `.paginacion-botones` con los botones Anterior y Siguiente (`.btn-secundario.btn-pequeno`).
 
 ## 8. Diseño responsive
 
