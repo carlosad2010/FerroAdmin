@@ -1,5 +1,6 @@
 import { api, ErrorApi } from './api.js';
 import { marcarCampo, validarEmail, activarValidacionRegistro } from './validaciones.js';
+import { montarCaptcha } from './captcha.js';
 
 // Sesión, envío del login, envío del registro y cierre de sesión (CONTRATO_API.md §5.3).
 // Las plantillas de los formularios están en app.js.
@@ -39,6 +40,7 @@ const bloquear = (form, bloqueado) => {
 
 export function activarLogin() {
   const form = document.getElementById('form-login');
+  const captcha = montarCaptcha(document.getElementById('captcha-bloque'));
 
   if (avisoPendiente) {
     const aviso = document.createElement('p');
@@ -56,16 +58,18 @@ export function activarLogin() {
     const email = form.email.value.trim();
     const password = form.password.value;
 
-    const emailValido = marcarCampo('email', validarEmail(email));
+       const emailValido = marcarCampo('email', validarEmail(email));
     const claveValida = marcarCampo('password', password === '' ? 'La clave es obligatoria.' : '');
-    if (!emailValido || !claveValida) return;
+    const desafio = captcha.leer(); // { captchaId, captchaRespuesta } o null
+    if (!emailValido || !claveValida || !desafio) return;
 
     bloquear(form, true);
     try {
-      await api('/auth/login', { metodo: 'POST', cuerpo: { email, password } });
+      await api('/auth/login', { metodo: 'POST', cuerpo: { email, password, ...desafio } });
       location.hash = '#/inventario';
     } catch (error) {
       mostrarErrorGeneral(error instanceof ErrorApi ? error.message : 'No se pudo iniciar sesión.');
+      captcha.renovar(); // cada reto sirve una sola vez: tras un fallo se pide otro
       bloquear(form, false);
     }
   });

@@ -43,7 +43,7 @@ const plantillaLogin = `
       </div>
       <p class="error" id="error-password" aria-live="polite"></p>
     </div>
-    <!-- Aquí irá el CAPTCHA (T07) -->
+    <div id="captcha-bloque"></div>
     <button type="submit" class="btn btn-primario btn-grande btn-bloque">Entrar ${icono('i-flecha')}</button>
     <p class="error" id="error-general" aria-live="polite"></p>
   </form>
@@ -89,7 +89,7 @@ const plantillaRegistro = `
       </div>
       <p class="error" id="error-password2" aria-live="polite"></p>
     </div>
-    <!-- Aquí irá el CAPTCHA (T07) -->
+    <div id="captcha-bloque"></div>
     <button type="submit" class="btn btn-primario btn-grande btn-bloque">Registrarme ${icono('i-flecha')}</button>
     <p class="error" id="error-general" aria-live="polite"></p>
   </form>
