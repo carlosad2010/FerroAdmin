@@ -19,4 +19,4 @@ async function checkServer() {
   }
 }
 
-checkServer();
+//checkServer();
