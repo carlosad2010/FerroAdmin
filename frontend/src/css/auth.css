@@ -179,7 +179,6 @@
 .auth-formulario h1 { margin: 0; font-size: var(--texto-2xl); }
 .auth-subtitulo { margin: var(--espacio-1) 0 var(--espacio-4); color: var(--color-texto-suave); }
 .auth-alterno { margin: var(--espacio-3) 0 0; text-align: center; color: var(--color-texto-suave); }
-.auth .estado { margin-top: var(--espacio-3); }
 
 /* Campo con icono a la izquierda */
 .campo-control {
@@ -274,8 +273,7 @@
   .auth .campo { margin-bottom: var(--espacio-2); }
   .auth .campo-control input { min-height: var(--alto-control); }
   .auth form > .error:empty { margin-top: 0; }
-  .auth-alterno,
-  .auth .estado { margin-top: var(--espacio-2); }
+  .auth-alterno { margin-top: var(--espacio-2); }
 }
 
 /* --- Animaciones ------------------------------------------------------------ */
