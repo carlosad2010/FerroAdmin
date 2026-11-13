@@ -3,7 +3,7 @@ dotenv.config();
 
 import express from 'express';
 import cookieParser from 'cookie-parser';
-import { pool } from './config/db.js';
+import { comprobarConexion } from './config/db.js';
 import productosRoutes from './routes/productos.js';
 
 const app = express();
@@ -20,8 +20,8 @@ app.get('/api/health', (req, res) => {
 
 // TODO: Aquí se montarán las rutas del contrato:
 // app.use('/api/auth', authRoutes);
+// app.use('/api/categorias', categoriasRoutes);
 app.use('/api/productos', productosRoutes);
-// app.use('/api/productos', productosRoutes);
 
 // 3. Manejador 404 para rutas de API no encontradas (§3.2 del contrato)
 app.use('/api/*', (req, res) => {
@@ -44,7 +44,16 @@ app.use((err, req, res, next) => {
   });
 });
 
-// 5. Iniciar servidor
+// 5. Comprobar PostgreSQL antes de aceptar peticiones (T09)
+try {
+  await comprobarConexion();
+  console.log(' Conexión a PostgreSQL OK');
+} catch (error) {
+  console.error(' Error al conectar a PostgreSQL:', error.message);
+  process.exit(1);
+}
+
+// 6. Iniciar servidor
 app.listen(PORT, () => {
   console.log(` Servidor Express de FerroAdmin corriendo en http://localhost:${PORT}`);
 });
