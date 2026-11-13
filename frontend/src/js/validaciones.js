@@ -34,7 +34,8 @@ export function marcarCampo(id, mensaje) {
   return mensaje === '';
 }
 
-export function activarValidacionRegistro() {
+// alEnviar(todoValido) se llama en cada envío, después de validar nombre y correo.
+export function activarValidacionRegistro(alEnviar) {
   const form = document.getElementById('form-registro');
   const campos = { name: validarNombre, email: validarEmail };
 
@@ -54,6 +55,6 @@ export function activarValidacionRegistro() {
       if (!marcarCampo(id, validar(input.value))) todoValido = false;
     });
 
-    if (todoValido) console.log('Registro válido (todavía no se envía)');
+    if (alEnviar) alEnviar(todoValido);
   });
 }
