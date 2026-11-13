@@ -10,12 +10,9 @@
 .auth {
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: var(--espacio-2);
   min-height: 100vh;
-  padding: var(--espacio-2);
   background: var(--color-fondo);
 }
-
 /* --- Panel de marca ----------------------------------------------------- */
 
 .auth-marca {
@@ -29,7 +26,8 @@
   overflow: hidden;
   color: var(--color-lateral-texto);
   background: var(--color-panel);
-  border-radius: var(--radio-xl);
+  color: var(--color-lateral-texto);
+  background: var(--color-panel);
 }
 
 /* El SVG decorativo va detrás del contenido */
@@ -152,19 +150,16 @@
   place-items: center;
   padding: var(--espacio-5) var(--espacio-3);
   overflow: hidden;
+ background:
+    radial-gradient(ellipse closest-side at 50% 50%, color-mix(in srgb, var(--color-fondo) 45%, transparent), transparent),
+    radial-gradient(ellipse closest-side at 30% 28%, color-mix(in srgb, var(--color-acento) 70%, transparent), transparent),
+    radial-gradient(ellipse closest-side at 72% 32%, color-mix(in srgb, var(--color-exito) 60%, transparent), transparent),
+    radial-gradient(ellipse closest-side at 30% 72%, color-mix(in srgb, var(--color-error) 45%, transparent), transparent),
+    radial-gradient(ellipse closest-side at 70% 70%, color-mix(in srgb, var(--color-acento) 55%, transparent), transparent),
+    var(--color-lateral);
 }
 
-/* Resplandor ámbar suave en la esquina superior */
-.auth-panel::before {
-  content: "";
-  position: absolute;
-  top: -10rem;
-  right: -10rem;
-  width: 30rem;
-  height: 30rem;
-  background: radial-gradient(closest-side, color-mix(in srgb, var(--color-acento) 14%, transparent), transparent);
-  pointer-events: none;
-}
+
 
 .auth-columna {
   position: relative;
@@ -178,7 +173,7 @@
   background: var(--color-tarjeta);
   border: 1px solid var(--color-borde);
   border-radius: var(--radio-xl);
-  box-shadow: var(--sombra-md);
+   box-shadow: var(--sombra-lg);
 }
 
 .auth-formulario h1 { margin: 0; font-size: var(--texto-2xl); }
@@ -231,15 +226,14 @@
   .auth {
     grid-template-columns: 1.1fr 1fr;
     grid-template-rows: none;
-    gap: var(--espacio-3);
-    padding: var(--espacio-3);
   }
 
   .auth-marca {
-    min-height: calc(100vh - 2rem);
+    min-height: 100vh;
+    min-height: 100svh;
     padding: var(--espacio-6);
   }
-
+  
   .auth-marca-cuerpo,
   .auth-marca-pie { display: block; }
 
@@ -247,7 +241,7 @@
     display: block;
     position: relative;
     width: min(100%, 34rem);
-    height: 22rem;
+    height: clamp(13rem, 40vh, 22rem);
     margin: 0 auto;
   }
 
@@ -268,11 +262,11 @@
     min-height: 100svh;
   }
 
-  .auth-marca,
-  .auth-panel {
-    min-height: 0;
-    padding: var(--espacio-3);
-  }
+  .auth-marca { padding: var(--espacio-4); }
+  .auth-panel { min-height: 0; padding: var(--espacio-3); }
+
+  .auth-escena { height: clamp(11rem, 38vh, 16rem); }
+  .auth-texto { display: none; }
 
   .auth-escena { display: none; }
   .auth-formulario { padding: var(--espacio-3); }
