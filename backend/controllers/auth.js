@@ -1,3 +1,4 @@
+import { verificarCaptcha } from '../services/captcha.js'; // NUEVO
 import {
   registrarUsuario as registrarUsuarioService,
   loginUsuario as loginUsuarioService,
@@ -49,13 +50,23 @@ export const registrarUsuario = async (req, res) => {
 
 export const loginUsuario = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, captchaId, captchaRespuesta } = req.body; // NUEVO
 
     if (!email || !password) {
       return res.status(400).json({
         error: {
           codigo: 'VALIDACION',
           mensaje: 'Correo y contraseña son obligatorios'
+        }
+      });
+    }
+
+    // NUEVO: el CAPTCHA se verifica antes de revisar las credenciales
+    if (!verificarCaptcha(captchaId, captchaRespuesta)) {
+      return res.status(400).json({
+        error: {
+          codigo: 'CAPTCHA_INVALIDO',
+          mensaje: 'La verificación es incorrecta o venció. Resuelve el nuevo reto.'
         }
       });
     }
