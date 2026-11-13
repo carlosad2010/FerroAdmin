@@ -1,5 +1,9 @@
-import { activarValidacionRegistro } from './validaciones.js';
+
+import { activarValidacionRegistro, marcarCampo } from './validaciones.js';
+import { llamarApi } from './api.js';
 const vista = document.getElementById('vista');
+
+let avisoLogin = '';
 
 // Icono del sprite /iconos.svg (decorativo: lo oculta del lector de pantalla)
 const icono = (nombre) =>
@@ -12,6 +16,7 @@ const botonOjito = (objetivo) =>
 const plantillaLogin = `
   <h1>Iniciar sesión</h1>
   <p class="auth-subtitulo">Ingresa para gestionar tu inventario.</p>
+  <p id="aviso-exito" role="status" style="color: var(--color-exito);"></p>
 
   <form id="form-login" novalidate>
     <div class="campo">
@@ -97,12 +102,35 @@ function activarOjitos() {
   });
 }
 
+async function enviarRegistro(datos) {
+  const boton = document.querySelector('#form-registro button[type="submit"]');
+  const errorGeneral = document.getElementById('error-general');
+  errorGeneral.textContent = '';
+  boton.disabled = true;
+
+  try {
+    await llamarApi('/auth/registro', { metodo: 'POST', cuerpo: datos });
+    avisoLogin = 'Cuenta creada. Ahora inicia sesión.';
+    location.hash = '#/login';
+  } catch (error) {
+    if (error.codigo === 'CONFLICTO') marcarCampo('email', error.mensaje);
+    else errorGeneral.textContent = error.mensaje;
+  } finally {
+    boton.disabled = false;
+  }
+}
+
 function mostrarVista() {
   const esRegistro = location.hash === '#/registro';
   vista.innerHTML = esRegistro ? plantillaRegistro : plantillaLogin;
   document.title = esRegistro ? 'Registro | FerroAdmin' : 'Iniciar sesión | FerroAdmin';
   activarOjitos();
-  if (esRegistro) activarValidacionRegistro();
+    if (esRegistro) {
+    activarValidacionRegistro(enviarRegistro);
+  } else {
+    document.getElementById('aviso-exito').textContent = avisoLogin;
+    avisoLogin = '';
+  }
 }
 
 window.addEventListener('hashchange', mostrarVista);

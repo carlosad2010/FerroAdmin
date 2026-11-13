@@ -27,6 +27,19 @@ export function validarEmail(valor) {
   return '';
 }
 
+export function validarClave(valor) {
+  if (valor === '') return 'La clave es obligatoria.';
+  if (valor.length < 8) return 'La clave debe tener al menos 8 caracteres.';
+  if (valor.length > 72) return 'La clave no puede pasar de 72 caracteres.';
+  return '';
+}
+
+export function validarConfirmacion(clave, confirmacion) {
+  if (confirmacion === '') return 'Confirma tu clave.';
+  if (clave !== confirmacion) return 'Las claves no coinciden.';
+  return '';
+}
+
 // Muestra el mensaje bajo el campo. Devuelve true si el campo es válido.
 export function marcarCampo(id, mensaje) {
   document.getElementById(`error-${id}`).textContent = mensaje;
@@ -34,14 +47,30 @@ export function marcarCampo(id, mensaje) {
   return mensaje === '';
 }
 
-export function activarValidacionRegistro() {
+export function activarValidacionRegistro(alValido)  {
   const form = document.getElementById('form-registro');
-  const campos = { name: validarNombre, email: validarEmail };
+  const clave = document.getElementById('password');
+  const confirmacion = document.getElementById('password2');
+
+  // Cada campo con su regla. La confirmación necesita saber cuál es la clave.
+  const campos = {
+    name: (valor) => validarNombre(valor),
+    email: (valor) => validarEmail(valor),
+    password: (valor) => validarClave(valor),
+    password2: (valor) => validarConfirmacion(clave.value, valor),
+  };
 
   // Al salir de un campo, se valida ese campo
   Object.entries(campos).forEach(([id, validar]) => {
     const input = document.getElementById(id);
     input.addEventListener('blur', () => marcarCampo(id, validar(input.value)));
+  });
+
+  // Si cambias la clave después de confirmar, se vuelve a comprobar la confirmación
+  clave.addEventListener('input', () => {
+    if (confirmacion.value !== '') {
+      marcarCampo('password2', campos.password2(confirmacion.value));
+    }
   });
 
   // Al enviar, se validan todos
@@ -54,6 +83,12 @@ export function activarValidacionRegistro() {
       if (!marcarCampo(id, validar(input.value))) todoValido = false;
     });
 
-    if (todoValido) console.log('Registro válido (todavía no se envía)');
+        if (todoValido) {
+      alValido({
+        nombre: document.getElementById('name').value.trim().replace(/\s+/g, ' '),
+        email: document.getElementById('email').value.trim(),
+        password: clave.value,
+      });
+    }
   });
 }
