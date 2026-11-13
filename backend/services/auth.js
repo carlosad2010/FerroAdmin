@@ -70,3 +70,12 @@ export const loginUsuario = async ({ email, password }) => {
     token
   };
 };
+
+// Usuario de la sesión actual (GET /api/auth/me). Devuelve undefined si ya no existe.
+export const obtenerUsuario = async (id) => {
+  const resultado = await pool.query(
+    'SELECT id, nombre, email, creado_en AS "creadoEn" FROM usuarios WHERE id = $1',
+    [id]
+  );
+  return resultado.rows[0];
+};
