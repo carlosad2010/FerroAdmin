@@ -1,4 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+-- pg_trgm: permite indexar busquedas parciales (ILIKE '%texto%') por nombre (T14)
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 DROP TABLE IF EXISTS movimientos_inventario CASCADE;
 DROP TABLE IF EXISTS productos CASCADE;
@@ -31,6 +33,11 @@ CREATE TABLE productos (
 );
 
 CREATE UNIQUE INDEX idx_productos_nombre_lower ON productos (lower(nombre));
+
+-- Indice trigram para GET /api/productos?buscar= (CONTRATO_API.md 5.5).
+-- Un indice normal no sirve cuando el patron empieza con comodin ('%mart%');
+-- este parte el nombre en trozos de 3 letras y evita recorrer toda la tabla.
+CREATE INDEX idx_productos_nombre_trgm ON productos USING gin (nombre gin_trgm_ops);
 
 CREATE TABLE movimientos_inventario (
     id SERIAL PRIMARY KEY,
