@@ -4,7 +4,6 @@ import { montarCaptcha } from './captcha.js';
 
 // Sesión, envío del login, envío del registro y cierre de sesión (CONTRATO_API.md §5.3).
 // Las plantillas de los formularios están en app.js.
-// Pendiente (T07): enviar captchaId y captchaRespuesta cuando exista el CAPTCHA.
 
 // Mensaje que una vista deja para la siguiente (por ejemplo, registro -> login).
 let avisoPendiente = '';
@@ -58,7 +57,7 @@ export function activarLogin() {
     const email = form.email.value.trim();
     const password = form.password.value;
 
-       const emailValido = marcarCampo('email', validarEmail(email));
+    const emailValido = marcarCampo('email', validarEmail(email));
     const claveValida = marcarCampo('password', password === '' ? 'La clave es obligatoria.' : '');
     const desafio = captcha.leer(); // { captchaId, captchaRespuesta } o null
     if (!emailValido || !claveValida || !desafio) return;
@@ -93,12 +92,14 @@ function validarClaves(form) {
 
 export function activarRegistro() {
   const form = document.getElementById('form-registro');
+  const captcha = montarCaptcha(document.getElementById('captcha-bloque')); // LINEA NUEVA
 
   // validaciones.js revisa nombre y correo; aquí se revisan las claves y se envía.
   activarValidacionRegistro(async (nombreYCorreoValidos) => {
     mostrarErrorGeneral('');
     const clavesValidas = validarClaves(form);
-    if (!nombreYCorreoValidos || !clavesValidas) return;
+    const desafio = captcha.leer(); // LINEA NUEVA: { captchaId, captchaRespuesta } o null
+    if (!nombreYCorreoValidos || !clavesValidas || !desafio) return; // LINEA CAMBIADA
 
     bloquear(form, true);
     try {
@@ -109,6 +110,7 @@ export function activarRegistro() {
           nombre: document.getElementById('name').value.trim().replace(/\s+/g, ' '),
           email: form.email.value.trim(),
           password: form.password.value,
+          ...desafio, // LINEA NUEVA: envía captchaId y captchaRespuesta
         },
       });
       // El registro no inicia sesión (§5.3): se va al login con un mensaje de éxito.
@@ -116,6 +118,7 @@ export function activarRegistro() {
       location.hash = '#/login';
     } catch (error) {
       mostrarErrorGeneral(error instanceof ErrorApi ? error.message : 'No se pudo crear la cuenta.');
+      captcha.renovar(); // LINEA NUEVA: cada reto sirve una sola vez
       bloquear(form, false);
     }
   });
