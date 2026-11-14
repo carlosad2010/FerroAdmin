@@ -159,8 +159,6 @@
     var(--color-lateral);
 }
 
-
-
 .auth-columna {
   position: relative;
   width: min(100%, 26rem);
