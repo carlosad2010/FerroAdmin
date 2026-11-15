@@ -1,4 +1,5 @@
 import { verificarCaptcha } from '../services/captcha.js';
+import { enviarCorreoBienvenida } from '../services/correo.js'; // LINEA NUEVA
 import {
   registrarUsuario as registrarUsuarioService,
   loginUsuario as loginUsuarioService,
@@ -30,6 +31,10 @@ export const registrarUsuario = async (req, res) => {
     }
 
     const nuevoUsuario = await registrarUsuarioService({ nombre, email, password });
+
+    // LINEA NUEVA (bloque de 3 líneas): el correo no debe hacer fallar el registro
+    enviarCorreoBienvenida({ nombre, email })
+      .catch((error) => console.error('No se pudo enviar el correo de bienvenida:', error.message));
 
     // Respuesta 201 Created con el objeto de salida del contrato
     return res.status(201).json({
