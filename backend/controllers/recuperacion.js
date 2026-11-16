@@ -14,7 +14,7 @@ export const pedirRecuperacion = async (req, res) => {
     if (!email) {
       return res.status(400).json({ error: { codigo: 'VALIDACION', mensaje: 'El correo es obligatorio' } });
     }
-    if (!verificarCaptcha(captchaId, captchaRespuesta)) {
+    if (!(await verificarCaptcha(captchaId, captchaRespuesta))) {
       return res.status(400).json({
         error: { codigo: 'CAPTCHA_INVALIDO', mensaje: 'La verificación es incorrecta o venció. Resuelve el nuevo reto.' },
       });
