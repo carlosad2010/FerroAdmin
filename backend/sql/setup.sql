@@ -2,6 +2,8 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 -- pg_trgm: permite indexar busquedas parciales (ILIKE '%texto%') por nombre (T14)
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
+DROP TABLE IF EXISTS tokens_recuperacion CASCADE;
+
 DROP TABLE IF EXISTS movimientos_inventario CASCADE;
 DROP TABLE IF EXISTS productos CASCADE;
 DROP TABLE IF EXISTS categorias CASCADE;
@@ -49,7 +51,13 @@ CREATE TABLE movimientos_inventario (
     creado_en TIMESTAMPTZ DEFAULT now()
 );
 
-
-
-
+-- Codigos para recuperar la clave (T21). Se guarda el hash, nunca el codigo.
+CREATE TABLE tokens_recuperacion (
+    id SERIAL PRIMARY KEY,
+    usuario_id INT NOT NULL REFERENCES usuarios(id) ON DELETE CASCADE,
+    token_hash TEXT NOT NULL UNIQUE,
+    vence_en TIMESTAMPTZ NOT NULL,
+    usado BOOLEAN NOT NULL DEFAULT false,
+    creado_en TIMESTAMPTZ DEFAULT now()
+);
 
