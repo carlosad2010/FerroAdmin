@@ -10,13 +10,13 @@ INSERT INTO categorias (nombre) VALUES
 ('Pinturas'),
 ('Electricidad');
 
-INSERT INTO productos (nombre, descripcion, categoria_id, precio, stock) VALUES
-('Martillo de uña 16 oz', 'Martillo carpintero con mango de fibra', 1, 28500.00, 12),
-('Taladro eléctrico', 'Taladro percutor 600W', 2, 180000.00, 5),
-('Tornillos 3/4"', 'Caja de tornillos autorroscantes x100', 3, 12500.00, 50),
-('Pintura blanca 1L', 'Pintura vinilo tipo 1 color blanco', 4, 35000.00, 12),
-('Llave ajustable', 'Llave inglesa de 8 pulgadas', 1, 28000.00, 3),
-('Cable eléctrico 2mm', 'Rollo de cable flexible x 10 metros', 5, 22000.00, 40);
+INSERT INTO productos (nombre, descripcion, categoria_id, precio, stock, imagen_url) VALUES
+('Martillo de uña 16 oz', 'Martillo carpintero con mango de fibra', 1, 28500.00, 12, '/productos/Martillo.png'),
+('Taladro eléctrico', 'Taladro percutor 600W', 2, 180000.00, 5, '/productos/Taladro.png'),
+('Tornillos 3/4"', 'Caja de tornillos autorroscantes x100', 3, 12500.00, 50, '/productos/Caja de tornillos.webp'),
+('Pintura blanca 1L', 'Pintura vinilo tipo 1 color blanco', 4, 35000.00, 12, '/productos/Pintura.png'),
+('Llave ajustable', 'Llave inglesa de 8 pulgadas', 1, 28000.00, 3, '/productos/Llave ajustable.png'),
+('Cable eléctrico 2mm', 'Rollo de cable flexible x 10 metros', 5, 22000.00, 40, '/productos/Rollo de cable flexible.webp');
 
 INSERT INTO movimientos_inventario (producto_id, usuario_id, tipo_movimiento, cantidad, motivo) 
 SELECT id, (SELECT id FROM usuarios LIMIT 1), 'ENTRADA', stock, 'Carga inicial de inventario'

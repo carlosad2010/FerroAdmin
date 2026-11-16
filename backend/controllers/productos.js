@@ -1,5 +1,6 @@
 import * as productosService from '../services/productos.js';
 import { ErrorApi } from '../services/productos.js';
+import { almacenarImagen, eliminarImagenAlmacenada } from '../services/imagenes.js';
 
 // Controladores de productos (CONTRATO_API.md §5.5).
 // Leen req, validan la entrada (§5.2), llaman al servicio y responden con el
@@ -47,7 +48,15 @@ const esObjeto = (valor) =>
 // Valida los 4 campos de POST y PUT. Los campos que genera el servidor
 // (id, creadoEn, actualizadoEn) se ignoran si vienen en el cuerpo.
 const leerProducto = (req) => {
-  const cuerpo = esObjeto(req.body) ? req.body : {};
+  const entrada = esObjeto(req.body) ? req.body : {};
+  const cuerpo = req.file
+    ? {
+        ...entrada,
+        categoriaId: Number(entrada.categoriaId),
+        precio: Number(entrada.precio),
+        stock: Number(entrada.stock),
+      }
+    : entrada;
   const detalles = [];
 
   const nombre = typeof cuerpo.nombre === 'string' ? cuerpo.nombre.trim() : '';
@@ -186,11 +195,52 @@ export const obtenerProducto = async (req, res, next) => {
 
 // POST /api/productos
 export const crearProducto = async (req, res, next) => {
+  let imagenSubida;
   try {
     const datos = leerProducto(req);
-    const producto = await productosService.crearProducto(datos);
+    const imagenUrlOriginal = req.body?.imagenUrl;
+    const imagenUrl = typeof imagenUrlOriginal === 'string'
+      ? imagenUrlOriginal.trim() || null
+      : imagenUrlOriginal;
+    if (imagenUrl !== undefined && imagenUrl !== null && imagenUrl !== '') {
+      if (typeof imagenUrl !== 'string' || imagenUrl.length > 2048) {
+        throw errorValidacion([
+          { campo: 'imagenUrl', mensaje: 'La URL debe tener máximo 2048 caracteres' },
+        ]);
+      }
+      let url;
+      try {
+        url = new URL(imagenUrl);
+      } catch {
+        throw errorValidacion([{ campo: 'imagenUrl', mensaje: 'Escribe una URL válida' }]);
+      }
+      if (!['http:', 'https:'].includes(url.protocol)) {
+        throw errorValidacion([
+          { campo: 'imagenUrl', mensaje: 'La URL debe comenzar con http o https' },
+        ]);
+      }
+    }
+    if (req.file && imagenUrl) {
+      throw errorValidacion([
+        { campo: 'imagenUrl', mensaje: 'Elige una URL o un archivo, no ambos' },
+      ]);
+    }
+
+    if (req.file) imagenSubida = await almacenarImagen(req.file);
+    const producto = await productosService.crearProducto({
+      ...datos,
+      imagenUrl: imagenSubida?.publicUrl ?? imagenUrl ?? null,
+    });
     return res.status(201).json({ data: producto });
   } catch (error) {
+    if (imagenSubida) {
+      try {
+        await eliminarImagenAlmacenada(imagenSubida.path);
+      } catch (errorLimpieza) {
+        console.error('No se pudo limpiar la imagen después de fallar la creación:', errorLimpieza.message);
+        return responderError(errorLimpieza, res, next);
+      }
+    }
     return responderError(error, res, next);
   }
 };

@@ -135,12 +135,12 @@ function mostrar404() {
 // el usuario cambia otra vez de ruta, la respuesta vieja se descarta.
 let navegacion = 0;
 
-// Rutas (CONTRATO_API.md §1.2), por ahora con hash: #/login, #/registro, #/inventario.
+// Rutas protegidas de la aplicación interna.
 async function mostrarVista() {
   const turno = ++navegacion;
   const ruta = location.hash.replace(/^#/, '') || '/';
 
-  if (!['/', '/login', '/registro', '/inventario'].includes(ruta)) {
+  if (!['/', '/login', '/registro', '/inventario', '/productos'].includes(ruta)) {
     mostrar404();
     return;
   }
@@ -154,10 +154,10 @@ async function mostrarVista() {
   } else if (!usuario) {
     if (ruta === '/login') mostrarAuth(false);
     else location.hash = '#/login';
-  } else if (ruta === '/inventario') {
+  } else if (ruta === '/inventario' || ruta === '/productos') {
     mostrarCascaron(cascaronApp, cascaronAuth);
-    document.title = 'Inventario | FerroAdmin';
-    mostrarInventario(cascaronApp, usuario);
+    document.title = `${ruta === '/productos' ? 'Productos' : 'Inventario'} | FerroAdmin`;
+    mostrarInventario(cascaronApp, usuario, ruta === '/productos');
   } else {
     location.hash = '#/inventario';
   }

@@ -23,6 +23,7 @@ CREATE TABLE productos (
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(120) NOT NULL,
     descripcion TEXT,
+    imagen_url TEXT,
     categoria_id INT REFERENCES categorias(id) ON DELETE SET NULL,
     precio NUMERIC(12, 2) NOT NULL CHECK (precio >= 0),
     stock INT NOT NULL DEFAULT 0 CHECK (stock >= 0),
@@ -41,7 +42,6 @@ CREATE TABLE movimientos_inventario (
     motivo VARCHAR(255),
     creado_en TIMESTAMPTZ DEFAULT now()
 );
-
 
 
 
