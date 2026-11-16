@@ -1,0 +1,10 @@
+{
+  "name": "ferroadmin",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Configuración para Vercel. El código vive en backend/ y frontend/, cada uno con su package.json.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  }
+}

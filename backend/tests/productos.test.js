@@ -428,10 +428,10 @@ describe('imagen del producto', () => {
     assert.deepEqual(camposConError(r), ['imagenUrl']);
   });
 
-  test('un archivo de más de 5 MiB responde 400', async () => {
-    const r = await crearConArchivo(new Uint8Array(5 * 1024 * 1024 + 1), 'image/png');
+  test('un archivo de más de 4 MB responde 400', async () => {
+    const r = await crearConArchivo(new Uint8Array(4 * 1024 * 1024 + 1), 'image/png');
     esError(r, 400, 'VALIDACION');
-    assert.equal(r.json.error.mensaje, 'La imagen no puede superar 5 MiB');
+    assert.equal(r.json.error.mensaje, 'La imagen no puede superar 4 MB');
   });
 
   test('con archivo, los campos del formulario siguen validándose', async () => {

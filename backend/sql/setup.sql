@@ -3,6 +3,7 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS pg_trgm;
 
 DROP TABLE IF EXISTS tokens_recuperacion CASCADE;
+DROP TABLE IF EXISTS captchas CASCADE;
 
 DROP TABLE IF EXISTS movimientos_inventario CASCADE;
 DROP TABLE IF EXISTS productos CASCADE;
@@ -63,4 +64,13 @@ CREATE TABLE tokens_recuperacion (
     usado BOOLEAN NOT NULL DEFAULT false,
     creado_en TIMESTAMPTZ DEFAULT now()
 );
+
+-- Retos del CAPTCHA (T07, CONTRATO_API.md §11.1). En la base y no en memoria,
+-- para que funcione en Vercel. Cada reto se borra al verificarlo.
+CREATE TABLE captchas (
+    id UUID PRIMARY KEY,
+    respuesta INT NOT NULL,
+    vence TIMESTAMPTZ NOT NULL
+);
+CREATE INDEX idx_captchas_vence ON captchas (vence);
 

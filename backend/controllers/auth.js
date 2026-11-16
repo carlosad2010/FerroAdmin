@@ -21,7 +21,7 @@ export const registrarUsuario = async (req, res) => {
     }
 
     // LINEA NUEVA (bloque de 7 líneas): el CAPTCHA se verifica antes de crear la cuenta
-    if (!verificarCaptcha(captchaId, captchaRespuesta)) {
+    if (!(await verificarCaptcha(captchaId, captchaRespuesta))) {
       return res.status(400).json({
         error: {
           codigo: 'CAPTCHA_INVALIDO',
@@ -77,7 +77,7 @@ export const loginUsuario = async (req, res) => {
     }
 
     // El CAPTCHA se verifica antes de revisar las credenciales
-    if (!verificarCaptcha(captchaId, captchaRespuesta)) {
+    if (!(await verificarCaptcha(captchaId, captchaRespuesta))) {
       return res.status(400).json({
         error: {
           codigo: 'CAPTCHA_INVALIDO',

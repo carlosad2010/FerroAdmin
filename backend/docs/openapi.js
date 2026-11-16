@@ -200,7 +200,7 @@ export const openapi = {
           'La imagen es opcional y se puede enviar de dos formas, nunca las dos a la vez:',
           '',
           '- **Como URL**, en JSON: el campo `imagenUrl` con una dirección `http` o `https` de máximo 2048 caracteres. En JSON los tipos son estrictos: `"2"` (texto) no vale como `categoriaId`.',
-          '- **Como archivo**, en `multipart/form-data`: el campo `imagen` con un JPEG, PNG o WebP de máximo 5 MiB. Los demás campos viajan como texto y el servidor los convierte a número. El archivo se guarda en Supabase Storage, así que necesita `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el `.env`.',
+          '- **Como archivo**, en `multipart/form-data`: el campo `imagen` con un JPEG, PNG o WebP de máximo 4 MB. Los demás campos viajan como texto y el servidor los convierte a número. El archivo se guarda en Supabase Storage, así que necesita `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el `.env`.',
           '',
           'Sin imagen, el producto queda con `imagenUrl: null`.',
         ].join('\n'),
@@ -231,7 +231,7 @@ export const openapi = {
               { campo: 'imagenUrl', mensaje: 'Elige una URL o un archivo, no ambos' },
             ]),
             'El archivo no es una imagen permitida': cuerpoError('VALIDACION', 'El archivo debe ser JPEG, PNG o WebP'),
-            'El archivo supera 5 MiB': cuerpoError('VALIDACION', 'La imagen no puede superar 5 MiB'),
+            'El archivo supera 4 MB': cuerpoError('VALIDACION', 'La imagen no puede superar 4 MB'),
             'Campos inválidos': validacion([
               { campo: 'nombre', mensaje: 'Debe tener entre 2 y 120 caracteres' },
               { campo: 'precio', mensaje: 'Debe ser un número mayor o igual a 0' },
@@ -669,7 +669,7 @@ export const openapi = {
           imagen: {
             type: 'string',
             format: 'binary',
-            description: 'JPEG, PNG o WebP de máximo 5 MiB',
+            description: 'JPEG, PNG o WebP de máximo 4 MB',
           },
         },
       },

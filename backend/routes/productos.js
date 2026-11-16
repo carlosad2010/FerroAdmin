@@ -15,7 +15,7 @@ import { ErrorApi } from '../services/productos.js';
 const router = Router();
 const recibirImagen = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  limits: { fileSize: 4 * 1024 * 1024, files: 1 }, // Vercel acepta máximo 4,5 MB por petición
   fileFilter: (req, file, callback) => {
     if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.mimetype)) {
       callback(new ErrorApi(400, 'VALIDACION', 'El archivo debe ser JPEG, PNG o WebP'));
@@ -33,7 +33,7 @@ const procesarImagen = (req, res, next) => {
       ? 'VALIDACION'
       : error.codigo ?? 'VALIDACION';
     const mensaje = error.code === 'LIMIT_FILE_SIZE'
-      ? 'La imagen no puede superar 5 MiB'
+      ? 'La imagen no puede superar 4 MB'
       : error.code === 'LIMIT_FILE_COUNT'
         ? 'Solo se permite una imagen'
         : error.message;

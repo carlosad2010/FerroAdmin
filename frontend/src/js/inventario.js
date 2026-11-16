@@ -440,7 +440,7 @@ function abrirFormularioProducto(producto) {
       (!editando
         ? campo('imagenUrl', 'URL de imagen (opcional)',
             '<input type="url" id="imagenUrl" name="imagenUrl" maxlength="2048" placeholder="https://ejemplo.com/imagen.jpg" autocomplete="url" aria-describedby="error-imagenUrl" />') +
-          campo('imagen', 'O selecciona una imagen de tu PC (JPEG, PNG o WebP; máximo 5 MiB)',
+          campo('imagen', 'O selecciona una imagen de tu PC (JPEG, PNG o WebP; máximo 4 MB)',
             '<input type="file" id="imagen" name="imagen" accept="image/jpeg,image/png,image/webp" aria-describedby="error-imagen" />') +
           '<div class="producto-vista-previa" id="vista-previa-imagen" hidden><img alt="Vista previa de la imagen del producto" /></div>'
         : ''),
@@ -464,8 +464,8 @@ function abrirFormularioProducto(producto) {
           marcar(form, 'imagen',
             archivo && !['image/jpeg', 'image/png', 'image/webp'].includes(archivo.type)
               ? 'Selecciona una imagen JPEG, PNG o WebP.'
-              : archivo && archivo.size > 5 * 1024 * 1024
-                ? 'La imagen no puede superar 5 MiB.'
+              : archivo && archivo.size > 4 * 1024 * 1024
+                ? 'La imagen no puede superar 4 MB.'
                 : ''),
         ];
         if (erroresImagen.includes(false)) return '';

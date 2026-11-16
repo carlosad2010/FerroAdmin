@@ -7,8 +7,13 @@ if (!process.env.DATABASE_URL) {
   throw new Error("Falta DATABASE_URL en backend/.env (copia .env.example y completa tus datos).");
 }
 
+// DATABASE_SSL=true en Supabase (exige SSL). En local no se define y no se usa SSL.
+// No poner "sslmode" en la URL: tendría prioridad sobre esta opción.
+// Pool pequeño: en Vercel cada copia de la función abre sus propias conexiones (§11.4).
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
+  ssl: process.env.DATABASE_SSL === "true" ? { rejectUnauthorized: false } : undefined,
+  max: 3,
 });
 
 // Un error en una conexión inactiva no debe tumbar el proceso.
