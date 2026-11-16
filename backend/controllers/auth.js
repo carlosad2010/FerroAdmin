@@ -1,3 +1,5 @@
+import { verificarCaptcha } from '../services/captcha.js';
+import { enviarCorreoBienvenida } from '../services/correo.js'; // LINEA NUEVA
 import {
   registrarUsuario as registrarUsuarioService,
   loginUsuario as loginUsuarioService,
@@ -6,7 +8,7 @@ import {
 
 export const registrarUsuario = async (req, res) => {
   try {
-    const { nombre, email, password } = req.body;
+    const { nombre, email, password, captchaId, captchaRespuesta } = req.body; // LINEA NUEVA: se leen también los datos del CAPTCHA
 
     // Validación básica de campos obligatorios (según contrato §5.2)
     if (!nombre || !email || !password) {
@@ -18,7 +20,21 @@ export const registrarUsuario = async (req, res) => {
       });
     }
 
+    // LINEA NUEVA (bloque de 7 líneas): el CAPTCHA se verifica antes de crear la cuenta
+    if (!verificarCaptcha(captchaId, captchaRespuesta)) {
+      return res.status(400).json({
+        error: {
+          codigo: 'CAPTCHA_INVALIDO',
+          mensaje: 'La verificación es incorrecta o venció. Resuelve el nuevo reto.'
+        }
+      });
+    }
+
     const nuevoUsuario = await registrarUsuarioService({ nombre, email, password });
+
+    // LINEA NUEVA (bloque de 3 líneas): el correo no debe hacer fallar el registro
+    enviarCorreoBienvenida({ nombre, email })
+      .catch((error) => console.error('No se pudo enviar el correo de bienvenida:', error.message));
 
     // Respuesta 201 Created con el objeto de salida del contrato
     return res.status(201).json({
@@ -49,13 +65,23 @@ export const registrarUsuario = async (req, res) => {
 
 export const loginUsuario = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, captchaId, captchaRespuesta } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({
         error: {
           codigo: 'VALIDACION',
           mensaje: 'Correo y contraseña son obligatorios'
+        }
+      });
+    }
+
+    // El CAPTCHA se verifica antes de revisar las credenciales
+    if (!verificarCaptcha(captchaId, captchaRespuesta)) {
+      return res.status(400).json({
+        error: {
+          codigo: 'CAPTCHA_INVALIDO',
+          mensaje: 'La verificación es incorrecta o venció. Resuelve el nuevo reto.'
         }
       });
     }
@@ -103,7 +129,7 @@ export const loginUsuario = async (req, res) => {
     return res.status(500).json({
       error: {
         codigo: 'ERROR_INTERNO',
-        mensaje: 'Error interno al iniciar sesión'
+      mensaje: 'Error interno al iniciar sesión'
       }
     });
   }

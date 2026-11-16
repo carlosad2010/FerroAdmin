@@ -178,7 +178,6 @@ Pensada para zonas oscuras (panel de marca, barra lateral).
 ```
 
 - Borde completo tintado del color del estado, fondo suave y símbolo (✔ ✖ ! ℹ). `role="alert"` solo para errores.
-- `#api-status` usa `class="estado"` y `data-estado="ok"` o `"error"`: es una píldora con símbolo y texto.
 
 ### Insignias de stock
 
@@ -249,7 +248,6 @@ Píldora con un punto de color y texto (el texto es obligatorio: el color solo n
   <main class="auth-panel">
     <div class="auth-columna">
       <div id="vista" class="auth-formulario"></div>   <!-- aquí pinta js/app.js -->
-      <p id="api-status" class="estado" role="status">…</p>
     </div>
   </main>
 </div>

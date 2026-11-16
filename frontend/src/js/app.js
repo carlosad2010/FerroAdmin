@@ -1,5 +1,6 @@
 import { obtenerSesion, activarLogin, activarRegistro } from './auth.js';
 import { mostrarInventario } from './inventario.js';
+import { montarRecuperar, montarRestablecer } from './recuperacion.js'; // LINEA NUEVA
 
 const vista = document.getElementById('vista');
 
@@ -43,10 +44,11 @@ const plantillaLogin = `
       </div>
       <p class="error" id="error-password" aria-live="polite"></p>
     </div>
-    <!-- Aquí irá el CAPTCHA (T07) -->
+    <div id="captcha-bloque"></div>
     <button type="submit" class="btn btn-primario btn-grande btn-bloque">Entrar ${icono('i-flecha')}</button>
     <p class="error" id="error-general" aria-live="polite"></p>
   </form>
+    <p class="auth-alterno"><a href="#/recuperar">¿Olvidaste tu clave?</a></p>
   <p class="auth-alterno">¿No tienes cuenta? <a href="#/registro">Registrar</a></p>
 `;
 
@@ -89,7 +91,7 @@ const plantillaRegistro = `
       </div>
       <p class="error" id="error-password2" aria-live="polite"></p>
     </div>
-    <!-- Aquí irá el CAPTCHA (T07) -->
+    <div id="captcha-bloque"></div>
     <button type="submit" class="btn btn-primario btn-grande btn-bloque">Registrarme ${icono('i-flecha')}</button>
     <p class="error" id="error-general" aria-live="polite"></p>
   </form>
@@ -138,7 +140,17 @@ let navegacion = 0;
 // Rutas protegidas de la aplicación interna.
 async function mostrarVista() {
   const turno = ++navegacion;
-  const ruta = location.hash.replace(/^#/, '') || '/';
+  const hash = location.hash.replace(/^#/, '') || '/';
+  const [ruta, consulta = ''] = hash.split('?'); // LINEA NUEVA: separa "/restablecer" de "?token=..."
+
+  // LINEA NUEVA (bloque): pantallas públicas de recuperación de clave
+  if (ruta === '/recuperar' || ruta === '/restablecer') {
+    mostrarCascaron(cascaronAuth, cascaronApp);
+    cascaronApp.innerHTML = '';
+    if (ruta === '/recuperar') montarRecuperar(vista);
+    else montarRestablecer(vista, new URLSearchParams(consulta).get('token') || '');
+    return;
+  }
 
   if (!['/', '/login', '/registro', '/inventario', '/productos'].includes(ruta)) {
     mostrar404();
@@ -162,6 +174,5 @@ async function mostrarVista() {
     location.hash = '#/inventario';
   }
 }
-
 window.addEventListener('hashchange', mostrarVista);
 mostrarVista();

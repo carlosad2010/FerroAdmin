@@ -492,7 +492,7 @@ Errores: `400 VALIDACION`, `401`, `404 NO_ENCONTRADO`.
 
 ### 5.6 Health
 
-`GET /api/health` responde `200 { "status": "ok" }`. Se deja tal como está porque `main.js` ya lo usa; es la única respuesta que no va dentro de `data`.
+`GET /api/health` responde `200 { "status": "ok" }`. Se usa para comprobar que el servidor responde (por ejemplo con `curl`); es la única respuesta que no va dentro de `data`.
 
 ---
 
