@@ -42,7 +42,7 @@ function iniciales(nombre) {
     .join('');
 }
 
-const plantilla = (usuario) => `
+const plantilla = (usuario, verProductos) => `
   <div class="app">
     <aside class="app-lateral">
       <a class="marca" href="#/inventario">
@@ -51,7 +51,8 @@ const plantilla = (usuario) => `
       </a>
       <nav aria-label="Principal">
         <ul class="app-nav">
-          <li><a href="#/inventario" aria-current="page">${icono('i-caja')}Inventario</a></li>
+          <li><a href="#/inventario"${verProductos ? '' : ' aria-current="page"'}>${icono('i-caja')}Inventario</a></li>
+          <li><a href="#/productos"${verProductos ? ' aria-current="page"' : ''}>${icono('i-etiqueta')}Productos</a></li>
         </ul>
       </nav>
       <button class="app-salir" type="button" id="btn-salir">${icono('i-salir')}Cerrar sesión</button>
@@ -71,11 +72,14 @@ const plantilla = (usuario) => `
       </header>
 
       <main class="app-contenido">
-        <div class="cabecera-pagina"><h1>Inventario</h1><p>Catálogo de productos</p></div>
+        <div class="cabecera-pagina">
+          <h1>${verProductos ? 'Productos' : 'Inventario'}</h1>
+          <p>${verProductos ? 'Catálogo visual de productos' : 'Catálogo y existencias'}</p>
+        </div>
 
         <section class="tarjeta seccion" aria-labelledby="t-inventario">
           <div class="seccion-cabecera">
-            <h2 id="t-inventario">Productos</h2>
+            <h2 id="t-inventario">${verProductos ? 'Catálogo de productos' : 'Productos'}</h2>
             <button class="btn btn-acento btn-pequeno" type="button" id="btn-nuevo">${icono('i-mas', 'icono-sm')}Nuevo producto</button>
           </div>
 
@@ -125,6 +129,39 @@ const fila = (p) => `
   </tr>
 `;
 
+const urlDeImagen = (valor) => {
+  if (typeof valor !== 'string' || valor.length > 2048) return '';
+  if (/^\/productos\/[a-zA-Z0-9 ._-]+\.(png|webp)$/i.test(valor)) return valor;
+  try {
+    const url = new URL(valor);
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch {
+    return '';
+  }
+};
+
+const tarjetaProducto = (p) => {
+  const imagen = urlDeImagen(p.imagenUrl);
+  return `
+    <article class="producto-tarjeta">
+      <div class="producto-imagen">
+        ${imagen
+          ? `<img src="${esc(imagen)}" alt="${esc(p.nombre)}" loading="lazy" data-imagen />`
+          : '<span class="producto-imagen-vacia">Sin imagen</span>'}
+      </div>
+      <div class="producto-detalle">
+        <p class="producto-categoria">${p.categoria ? esc(p.categoria.nombre) : 'Sin categoría'}</p>
+        <h3>${esc(p.nombre)}</h3>
+        <div class="producto-resumen">
+          <strong>${esc(formatoPrecio.format(p.precio))}</strong>
+          <span>${p.stock} ${p.stock === 1 ? 'unidad' : 'unidades'}</span>
+        </div>
+        ${insignia(p.stock)}
+      </div>
+    </article>
+  `;
+};
+
 function pintarListado() {
   const { productos, meta, buscar, categoriaId } = estado;
   const listado = $('#listado');
@@ -137,24 +174,26 @@ function pintarListado() {
         : 'Todavía no hay productos. Crea el primero con «Nuevo producto».'
     }</p>`;
   } else {
-    listado.innerHTML = `
-      <div class="tabla-contenedor">
-        <table class="tabla">
-          <caption class="sr-only">Productos del inventario</caption>
-          <thead>
-            <tr>
-              <th scope="col">Producto</th>
-              <th scope="col">Categoría</th>
-              <th scope="col" class="numero">Precio</th>
-              <th scope="col" class="numero">Stock</th>
-              <th scope="col">Estado</th>
-              <th scope="col"><span class="sr-only">Acciones</span></th>
-            </tr>
-          </thead>
-          <tbody>${productos.map(fila).join('')}</tbody>
-        </table>
-      </div>
-    `;
+    listado.innerHTML = estado.verProductos
+      ? `<div class="productos-cuadricula">${productos.map(tarjetaProducto).join('')}</div>`
+      : `
+        <div class="tabla-contenedor">
+          <table class="tabla">
+            <caption class="sr-only">Productos del inventario</caption>
+            <thead>
+              <tr>
+                <th scope="col">Producto</th>
+                <th scope="col">Categoría</th>
+                <th scope="col" class="numero">Precio</th>
+                <th scope="col" class="numero">Stock</th>
+                <th scope="col">Estado</th>
+                <th scope="col"><span class="sr-only">Acciones</span></th>
+              </tr>
+            </thead>
+            <tbody>${productos.map(fila).join('')}</tbody>
+          </table>
+        </div>
+      `;
   }
 
   const paginas = Math.max(meta.totalPaginas, 1);
@@ -251,7 +290,14 @@ function marcar(form, id, mensaje) {
  * Abre un modal con un formulario. `alConfirmar(form)` devuelve el texto de éxito
  * o lanza un error. Devuelve '' (sin llamar a la API) si la validación local falla.
  */
-function abrirModal({ titulo, cuerpo, textoAccion, claseAccion = 'btn-primario', alConfirmar }) {
+function abrirModal({
+  titulo,
+  cuerpo,
+  textoAccion,
+  claseAccion = 'btn-primario',
+  alConfirmar,
+  alCerrar,
+}) {
   const origen = document.activeElement;
   const fondo = document.createElement('div');
   fondo.className = 'modal-fondo';
@@ -276,6 +322,7 @@ function abrirModal({ titulo, cuerpo, textoAccion, claseAccion = 'btn-primario',
 
   const cerrar = () => {
     fondo.remove();
+    alCerrar?.();
     // El foco vuelve al botón que abrió el modal; si la tabla se repintó, al de "Nuevo producto".
     (origen?.isConnected ? origen : $('#btn-nuevo'))?.focus();
   };
@@ -342,6 +389,7 @@ function abrirModal({ titulo, cuerpo, textoAccion, claseAccion = 'btn-primario',
   });
 
   (form.querySelector('input, select') ?? fondo.querySelector('[data-cerrar]')).focus();
+  return form;
 }
 
 // ---------- Formularios ----------
@@ -372,8 +420,9 @@ function leerProducto(form) {
 
 function abrirFormularioProducto(producto) {
   const editando = Boolean(producto);
+  let urlTemporal;
 
-  abrirModal({
+  const form = abrirModal({
     titulo: editando ? 'Editar producto' : 'Nuevo producto',
     textoAccion: editando ? 'Guardar cambios' : 'Crear producto',
     cuerpo:
@@ -387,10 +436,55 @@ function abrirFormularioProducto(producto) {
       campo('precio', 'Precio',
         `<input type="text" id="precio" name="precio" inputmode="decimal" autocomplete="off" aria-describedby="error-precio" value="${editando ? producto.precio : ''}" />`) +
       campo('stock', editando ? 'Stock' : 'Stock inicial',
-        `<input type="text" id="stock" name="stock" inputmode="numeric" autocomplete="off" aria-describedby="error-stock" value="${editando ? producto.stock : ''}" />`),
+        `<input type="text" id="stock" name="stock" inputmode="numeric" autocomplete="off" aria-describedby="error-stock" value="${editando ? producto.stock : ''}" />`) +
+      (!editando
+        ? campo('imagenUrl', 'URL de imagen (opcional)',
+            '<input type="url" id="imagenUrl" name="imagenUrl" maxlength="2048" placeholder="https://ejemplo.com/imagen.jpg" autocomplete="url" aria-describedby="error-imagenUrl" />') +
+          campo('imagen', 'O selecciona una imagen de tu PC (JPEG, PNG o WebP; máximo 5 MiB)',
+            '<input type="file" id="imagen" name="imagen" accept="image/jpeg,image/png,image/webp" aria-describedby="error-imagen" />') +
+          '<div class="producto-vista-previa" id="vista-previa-imagen" hidden><img alt="Vista previa de la imagen del producto" /></div>'
+        : ''),
     alConfirmar: async (form) => {
       const datos = leerProducto(form);
       if (!datos) return '';
+      if (!editando) {
+        const url = form.querySelector('#imagenUrl').value.trim();
+        const archivo = form.querySelector('#imagen').files[0];
+        const urlValida = url === '' || (() => {
+          try {
+            return ['http:', 'https:'].includes(new URL(url).protocol);
+          } catch {
+            return false;
+          }
+        })();
+        const erroresImagen = [
+          marcar(form, 'imagenUrl',
+            url.length > 2048 ? 'La URL no puede superar 2048 caracteres.'
+              : !urlValida ? 'Escribe una URL absoluta que comience con http o https.' : ''),
+          marcar(form, 'imagen',
+            archivo && !['image/jpeg', 'image/png', 'image/webp'].includes(archivo.type)
+              ? 'Selecciona una imagen JPEG, PNG o WebP.'
+              : archivo && archivo.size > 5 * 1024 * 1024
+                ? 'La imagen no puede superar 5 MiB.'
+                : ''),
+        ];
+        if (erroresImagen.includes(false)) return '';
+
+        if (archivo && url) {
+          marcar(form, 'imagenUrl', 'Elige una URL o un archivo, no ambos.');
+          marcar(form, 'imagen', 'Elige una URL o un archivo, no ambos.');
+          return '';
+        }
+
+        if (archivo) {
+          const cuerpo = new FormData();
+          for (const [nombre, valor] of Object.entries(datos)) cuerpo.append(nombre, valor);
+          cuerpo.append('imagen', archivo);
+          await api('/productos', { metodo: 'POST', cuerpo });
+          return 'Producto creado correctamente.';
+        }
+        if (url) datos.imagenUrl = url;
+      }
 
       if (editando) {
         await api(`/productos/${producto.id}`, { metodo: 'PUT', cuerpo: datos });
@@ -399,7 +493,38 @@ function abrirFormularioProducto(producto) {
       await api('/productos', { metodo: 'POST', cuerpo: datos });
       return 'Producto creado correctamente.';
     },
+    alCerrar: () => {
+      if (urlTemporal) URL.revokeObjectURL(urlTemporal);
+    },
   });
+
+  if (!editando) {
+    const campoUrl = form.querySelector('#imagenUrl');
+    const campoArchivo = form.querySelector('#imagen');
+    const contenedorPrevia = form.querySelector('#vista-previa-imagen');
+    const imagenPrevia = contenedorPrevia.querySelector('img');
+    const actualizarPrevia = (url) => {
+      contenedorPrevia.hidden = !url;
+      if (url) imagenPrevia.src = url;
+      else imagenPrevia.removeAttribute('src');
+    };
+
+    campoUrl.addEventListener('input', () => {
+      if (campoUrl.value) {
+        campoArchivo.value = '';
+        if (urlTemporal) URL.revokeObjectURL(urlTemporal);
+        urlTemporal = null;
+      }
+      actualizarPrevia(urlDeImagen(campoUrl.value.trim()));
+    });
+    campoArchivo.addEventListener('change', () => {
+      const archivo = campoArchivo.files[0];
+      campoUrl.value = '';
+      if (urlTemporal) URL.revokeObjectURL(urlTemporal);
+      urlTemporal = archivo ? URL.createObjectURL(archivo) : null;
+      actualizarPrevia(urlTemporal);
+    });
+  }
 }
 
 function abrirAjusteStock(producto) {
@@ -441,10 +566,11 @@ function abrirConfirmacionEliminar(producto) {
 
 // ---------- Entrada ----------
 
-export function mostrarInventario(contenedor, usuario) {
+export function mostrarInventario(contenedor, usuario, verProductos = false) {
   raiz = contenedor;
   estado = {
     buscar: '',
+    verProductos,
     categoriaId: '',
     pagina: 1,
     peticion: 0,
@@ -452,7 +578,7 @@ export function mostrarInventario(contenedor, usuario) {
     productos: [],
     meta: { total: 0, pagina: 1, limite: PRODUCTOS_POR_PAGINA, totalPaginas: 0 },
   };
-  raiz.innerHTML = plantilla(usuario);
+  raiz.innerHTML = plantilla(usuario, verProductos);
 
   $('#btn-salir').addEventListener('click', cerrarSesion);
   $('#btn-nuevo').addEventListener('click', () => abrirFormularioProducto(null));
@@ -496,6 +622,14 @@ export function mostrarInventario(contenedor, usuario) {
     else if (boton.dataset.accion === 'stock') abrirAjusteStock(producto);
     else abrirConfirmacionEliminar(producto);
   });
+  $('#listado').addEventListener('error', (evento) => {
+    const imagen = evento.target.closest('img[data-imagen]');
+    if (!imagen) return;
+    const reemplazo = document.createElement('span');
+    reemplazo.className = 'producto-imagen-vacia';
+    reemplazo.textContent = 'Imagen no disponible';
+    imagen.replaceWith(reemplazo);
+  }, true);
 
   pintarListado();
   cargarCategorias();

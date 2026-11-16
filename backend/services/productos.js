@@ -17,6 +17,7 @@ export class ErrorApi extends Error {
 const COLUMNAS = `
   p.id,
   p.nombre,
+  p.imagen_url,
   p.precio,
   p.stock,
   p.creado_en,
@@ -40,6 +41,7 @@ const COLUMNAS_ORDEN = {
 const aProducto = (fila) => ({
   id: fila.id,
   nombre: fila.nombre,
+  imagenUrl: fila.imagen_url,
   categoria:
     fila.categoria_id === null
       ? null
@@ -135,18 +137,18 @@ export const obtenerProducto = async (id) => {
   return aProducto(resultado.rows[0]);
 };
 
-export const crearProducto = async ({ nombre, categoriaId, precio, stock }) => {
+export const crearProducto = async ({ nombre, categoriaId, precio, stock, imagenUrl }) => {
   try {
     const resultado = await pool.query(
       `WITH p AS (
-         INSERT INTO productos (nombre, categoria_id, precio, stock)
-         VALUES ($1, $2, $3, $4)
+         INSERT INTO productos (nombre, categoria_id, precio, stock, imagen_url)
+         VALUES ($1, $2, $3, $4, $5)
          RETURNING *
        )
        SELECT ${COLUMNAS}
        FROM p
        ${JOIN_CATEGORIA}`,
-      [nombre, categoriaId, precio, stock]
+      [nombre, categoriaId, precio, stock, imagenUrl]
     );
     return aProducto(resultado.rows[0]);
   } catch (error) {

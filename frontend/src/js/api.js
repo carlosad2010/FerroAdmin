@@ -1,5 +1,5 @@
 // Función única para llamar a la API (CONTRATO_API.md §1.2).
-// Envía y recibe JSON, interpreta los errores del §3.2 y lleva a #/login
+// Envía JSON o FormData, interpreta los errores del §3.2 y lleva a #/login
 // cuando una ruta protegida responde 401 NO_AUTENTICADO.
 // La cookie de sesión es HttpOnly y viaja sola: aquí no se toca.
 
@@ -23,8 +23,12 @@ export async function api(ruta, { metodo = 'GET', cuerpo } = {}) {
   const opciones = { method: metodo, headers: { Accept: 'application/json' } };
 
   if (cuerpo !== undefined) {
-    opciones.headers['Content-Type'] = 'application/json';
-    opciones.body = JSON.stringify(cuerpo);
+    if (cuerpo instanceof FormData) {
+      opciones.body = cuerpo;
+    } else {
+      opciones.headers['Content-Type'] = 'application/json';
+      opciones.body = JSON.stringify(cuerpo);
+    }
   }
 
   let respuesta;
