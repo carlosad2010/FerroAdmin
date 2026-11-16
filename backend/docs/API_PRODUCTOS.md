@@ -275,7 +275,7 @@ Se puede enviar de dos formas, nunca las dos a la vez. Sin imagen, el producto q
 | Forma | Cómo se envía | Reglas |
 |---|---|---|
 | Como URL | En JSON, campo `imagenUrl` | Texto que empieza por `http` o `https`, máximo 2048 caracteres. Vacío o `null` equivale a no enviar imagen |
-| Como archivo | En `multipart/form-data`, campo `imagen` | JPEG, PNG o WebP de máximo 5 MiB. Se revisa el contenido del archivo, no solo su tipo declarado |
+| Como archivo | En `multipart/form-data`, campo `imagen` | JPEG, PNG o WebP de máximo 4 MB. Se revisa el contenido del archivo, no solo su tipo declarado |
 
 Al enviar un archivo, los demás campos viajan como texto y el servidor los convierte a número. El archivo se guarda en Supabase Storage: necesita `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en `backend/.env` (y, opcional, `SUPABASE_STORAGE_BUCKET`, que por defecto es `productos`). Sin esas variables, subir un archivo responde `500 ERROR_INTERNO` con el mensaje `El almacenamiento de imágenes no está configurado`; enviar una URL sigue funcionando.
 
@@ -293,7 +293,7 @@ Errores de la imagen, todos `400 VALIDACION`:
 | Archivo y URL a la vez | `Elige una URL o un archivo, no ambos` | Sí, campo `imagenUrl` |
 | El archivo no es JPEG, PNG ni WebP | `El archivo debe ser JPEG, PNG o WebP` | No |
 | El archivo dice ser imagen pero su contenido no lo es | `El archivo debe ser una imagen JPEG, PNG o WebP válida` | No |
-| El archivo supera 5 MiB | `La imagen no puede superar 5 MiB` | No |
+| El archivo supera 4 MB | `La imagen no puede superar 4 MB` | No |
 
 En los casos con `detalles`, el `mensaje` general es `Hay campos con errores` y el texto de la tabla va dentro de `detalles`.
 
