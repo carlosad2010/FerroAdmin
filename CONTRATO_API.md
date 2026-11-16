@@ -1,8 +1,15 @@
 # 📑 Contrato de API y Arquitectura — FerroAdmin
 
 > **Tarea:** T01 — Definir arquitectura y contrato de API
-> **Versión:** 1.0 (borrador para revisión) · **Autor:** Carlos Adrian Zapata · **Fecha:** 2026-11-06
+> **Versión:** 1.1 · **Autor:** Carlos Adrian Zapata · **Fecha:** 2026-11-13 (v1.0: 2026-11-06)
 > **Estado:** 🟡 En revisión. Ver [§10 Revisión del equipo](#10-revisión-del-equipo)
+
+**Cambios en la v1.1** (no rompen nada de lo que ya funciona; ver [§11](#11-segunda-fase-tareas-t21-a-t26)):
+
+- Nuevas tareas de Trello T21 a T26: mejorar login, imágenes de productos, deploy en Vercel, correo de stock bajo, cambio de contraseña y base de datos externa.
+- Nuevos endpoints: `PATCH /api/auth/password`, `POST /api/productos/:id/imagen` y `GET /api/tareas/stock-bajo`.
+- Nuevo campo opcional `imagenUrl` en el objeto Producto y regla oficial de stock bajo (§11.3).
+- Nuevas variables de entorno para producción (§11.1).
 
 Este documento es el acuerdo entre frontend y backend. Si el código no coincide con el contrato, se corrige el código o se actualiza el contrato mediante un PR, pero nunca uno solo de los dos.
 
@@ -248,6 +255,7 @@ Orden de verificación en el login: (1) validar campos, (2) CAPTCHA, (3) credenc
 | POST | `/api/auth/login` | Pública | Iniciar sesión |
 | POST | `/api/auth/logout` | Pública* | Cerrar sesión |
 | GET | `/api/auth/me` | Sesión | Usuario de la sesión actual |
+| PATCH | `/api/auth/password` | Sesión | Cambiar la contraseña (§11.5, T25) |
 | GET | `/api/categorias` | Sesión | Listar categorías |
 | GET | `/api/productos` | Sesión | Listar, buscar y filtrar |
 | GET | `/api/productos/:id` | Sesión | Detalle de un producto |
@@ -255,6 +263,8 @@ Orden de verificación en el login: (1) validar campos, (2) CAPTCHA, (3) credenc
 | PUT | `/api/productos/:id` | Sesión | Actualizar producto (completo) |
 | PATCH | `/api/productos/:id/stock` | Sesión | Sumar o restar stock |
 | DELETE | `/api/productos/:id` | Sesión | Eliminar producto |
+| POST | `/api/productos/:id/imagen` | Sesión | Subir la imagen de un producto desde el computador (§11.2, T22) |
+| GET | `/api/tareas/stock-bajo` | Secreto del cron | Revisar el stock bajo y enviar el correo (§11.3, T24) |
 
 \* El logout responde 204 aunque no haya sesión, para que siempre pueda limpiar la cookie.
 
@@ -286,10 +296,13 @@ Orden de verificación en el login: (1) validar campos, (2) CAPTCHA, (3) credenc
   "categoria": { "id": 2, "nombre": "Herramientas manuales" },
   "precio": 28500,
   "stock": 12,
+  "imagenUrl": "https://xyz.supabase.co/storage/v1/object/public/productos/15.webp",
   "creadoEn": "2026-11-06T15:30:00.000Z",
   "actualizadoEn": "2026-11-06T15:30:00.000Z"
 }
 ```
+
+`imagenUrl` (v1.1) es `null` cuando el producto no tiene imagen.
 
 ### 5.2 Reglas de validación de entrada
 
@@ -305,6 +318,9 @@ Orden de verificación en el login: (1) validar campos, (2) CAPTCHA, (3) credenc
 | `precio` | number | Obligatorio, mayor o igual a 0, máximo 2 decimales |
 | `stock` | integer | Obligatorio, mayor o igual a 0 |
 | `cantidad` (ajuste de stock) | integer | Obligatorio, distinto de 0 (positivo suma, negativo resta) |
+| `imagenUrl` (v1.1) | string \| null | Opcional en `POST` y `PUT` de productos. Si viene, debe empezar por `https://` y tener máximo 500 caracteres |
+| `claveActual` (v1.1) | string | Obligatorio en el cambio de contraseña, no vacío |
+| `claveNueva` (v1.1) | string | Obligatorio, 8 a 72 caracteres y distinta de `claveActual` |
 
 Los campos que genera el servidor (`id`, `creadoEn`, `actualizadoEn`) se ignoran si vienen en el cuerpo.
 
@@ -502,7 +518,8 @@ Errores: `400 VALIDACION`, `401`, `404 NO_ENCONTRADO`.
 |---|---|
 | `usuarios` | `id SERIAL PK`, `nombre VARCHAR(100)`, `email VARCHAR(150) UNIQUE`, `password_hash TEXT`, `creado_en TIMESTAMPTZ DEFAULT now()` |
 | `categorias` | `id SERIAL PK`, `nombre VARCHAR(60) UNIQUE` |
-| `productos` | `id SERIAL PK`, `nombre VARCHAR(120)`, `categoria_id INT REFERENCES categorias`, `precio NUMERIC(12,2) CHECK (precio >= 0)`, `stock INT CHECK (stock >= 0)`, `creado_en TIMESTAMPTZ DEFAULT now()`, `actualizado_en TIMESTAMPTZ DEFAULT now()`. Índice único sobre `lower(nombre)` |
+| `productos` | `id SERIAL PK`, `nombre VARCHAR(120)`, `categoria_id INT REFERENCES categorias`, `precio NUMERIC(12,2) CHECK (precio >= 0)`, `stock INT CHECK (stock >= 0)`, `imagen_url VARCHAR(500) NULL` (v1.1), `creado_en TIMESTAMPTZ DEFAULT now()`, `actualizado_en TIMESTAMPTZ DEFAULT now()`. Índice único sobre `lower(nombre)` |
+| `captchas` (v1.1) | `id UUID PK`, `respuesta INT NOT NULL`, `vence TIMESTAMPTZ NOT NULL`. Ver §11.1 |
 
 ---
 
@@ -549,3 +566,141 @@ Cada integrante revisa el PR de este documento y lo aprueba o deja comentarios. 
 - [ ] Rafaela Martinez Jimenez
 - [ ] Aaron Medina
 - [ ] Andres Lozano
+
+La v1.1 (§11) necesita una nueva revisión de todo el equipo, en especial de los responsables de cada tarea.
+
+---
+
+## 11. Segunda fase (tareas T21 a T26)
+
+| Tarea | Responsable | Resumen | Sección |
+|---|---|---|---|
+| T21 Mejorar login | Rafaela | La tarjeta de Trello no tiene descripción todavía | §11.6 |
+| T22 Componente nuevo Productos | Aaron | Ver productos con su imagen; la imagen se carga por URL o desde el computador | §11.2 |
+| T23 Deployar | Carlos y Andrés | Publicar el proyecto en Vercel | §11.1 |
+| T24 Envío de correo con stock bajo | Aaron | Tarea programada que revisa el stock bajo dos veces al día y envía un correo | §11.3 |
+| T25 Cambiar contraseña desde el panel principal | Carlos | El usuario con sesión cambia su contraseña | §11.5 |
+| T26 BD externa | Carlos | Usar una base de datos en la nube (por ejemplo Supabase) en lugar de la local | §11.4 |
+
+### 11.1 Deploy en Vercel (T23)
+
+```text
+Navegador ──▶ Vercel ──┬── archivos estáticos (frontend/dist)
+                       └── /api/* ──▶ Express como función ──pg──▶ PostgreSQL en Supabase (§11.4)
+```
+
+- Frontend y API se publican en **el mismo dominio** de Vercel, igual que en desarrollo con el proxy de Vite. Así la cookie `SameSite=Strict` sigue funcionando y no hace falta CORS.
+- El frontend se compila con `vite build` y se sirve como archivos estáticos. Toda ruta que no sea `/api/*` ni un archivo devuelve `index.html` (reemplaza lo descrito en §1.3 cuando se publica en Vercel).
+- Express se exporta como función (`export default app`) y solo llama a `app.listen` cuando se ejecuta localmente.
+- En producción `NODE_ENV=production` y la cookie lleva `Secure` (§4.1).
+
+**Implicaciones de usar funciones de Vercel** (el servidor no queda encendido todo el tiempo: cada petición puede atenderla una copia distinta):
+
+| Qué | Problema | Decisión |
+|---|---|---|
+| CAPTCHA (T07) | Hoy se guarda en la memoria del servidor; el reto pedido en una copia no existe en otra | Guardarlo en la tabla `captchas` (§6) con la misma regla: un uso y 5 minutos |
+| Límite de intentos de login (§5.3) | Un contador en memoria tampoco se comparte | Contar los intentos en la base de datos, o dejarlo documentado como pendiente |
+| Imágenes subidas (T22) | Los archivos guardados en el servidor se pierden | Guardarlas en Supabase Storage (§11.2) |
+| Tarea programada (T24) | No hay un proceso encendido que ejecute un temporizador | Usar Vercel Cron, que llama a un endpoint (§11.3) |
+
+Variables de entorno nuevas (se configuran en Vercel y en `backend/.env.example`, nunca en el repositorio):
+
+```dotenv
+NODE_ENV=production
+DATABASE_URL=postgresql://postgres.<proyecto>:<clave>@<host>.pooler.supabase.com:6543/postgres
+DATABASE_SSL=true
+CRON_SECRET=valor-largo-y-aleatorio
+SUPABASE_URL=https://<proyecto>.supabase.co
+SUPABASE_SERVICE_KEY=solo-en-el-servidor-nunca-en-el-frontend
+SUPABASE_BUCKET=productos
+SMTP_HOST=smtp.ejemplo.com
+SMTP_PORT=587
+SMTP_USER=usuario
+SMTP_PASS=clave
+ALERTA_STOCK_PARA=compras@ferreteria.co
+```
+
+### 11.2 Imágenes de productos (T22)
+
+- El objeto Producto gana el campo `imagenUrl` (`null` si no tiene). La tabla gana la columna `imagen_url` (§6).
+- **Opción 1, por URL:** `POST` y `PUT /api/productos` aceptan `imagenUrl` (§5.2).
+- **Opción 2, desde el computador:**
+
+#### `POST /api/productos/:id/imagen`
+
+Cuerpo `multipart/form-data` con un campo `imagen`. Formatos JPG, PNG o WEBP, máximo 4 MB (Vercel acepta como máximo 4,5 MB por petición). El servidor la guarda en Supabase Storage y actualiza `imagen_url`.
+
+`200 OK`: `{ "data": <Producto> }` con la nueva `imagenUrl`.
+
+Errores: `400 VALIDACION` (sin archivo, formato no permitido o más de 4 MB), `401`, `404 NO_ENCONTRADO`.
+
+- Al crear un producto con imagen desde el computador, el frontend primero hace `POST /api/productos` y luego sube la imagen con el `id` recibido.
+- Frontend: nueva vista de productos con imágenes. Ruta propuesta `#/productos`, con sesión. El diseño lo define el responsable siguiendo `GUIA_VISUAL.md`; si un producto no tiene imagen se muestra un marcador neutro.
+
+### 11.3 Correo de stock bajo (T24)
+
+**Regla oficial de stock bajo:** un producto tiene stock bajo cuando tiene **entre 1 y 5 unidades**. Con 0 unidades está **agotado**. Es la misma regla que ya usa la tabla del inventario (`STOCK_BAJO = 5` en `frontend/src/js/inventario.js`); si cambia, se cambia aquí y en el código a la vez.
+
+#### `GET /api/tareas/stock-bajo`
+
+Lo llama Vercel Cron dos veces al día a las 8:00 y 16:00 hora de Colombia (`0 13 * * *` y `0 21 * * *` en UTC, porque Vercel usa UTC; ver `vercel.json`). No se llama desde el frontend.
+
+- Acceso: cabecera `Authorization: Bearer <CRON_SECRET>`. Sin ella responde `401 NO_AUTENTICADO`.
+- Busca los productos con `stock BETWEEN 1 AND 5` y los agotados (`stock = 0`), y envía un correo a `ALERTA_STOCK_PARA` con dos listas: stock bajo y agotados (nombre, categoría y unidades).
+- Si no hay productos en ninguna de las dos listas, no envía correo.
+
+`200 OK`:
+
+```json
+{ "data": { "stockBajo": 3, "agotados": 1, "correoEnviado": true } }
+```
+
+Implementación actual (T23): responde `{ "data": { "stockBajo": <cantidad> } }` y solo registra los productos en los logs. El envío del correo y la lista de agotados quedan para T24.
+
+Errores: `401 NO_AUTENTICADO`, `500 ERROR_INTERNO` (por ejemplo, si falla el envío del correo).
+
+### 11.4 Base de datos externa (T26)
+
+- Se usa PostgreSQL en Supabase. No cambia el código de las consultas: solo la `DATABASE_URL`.
+- `config/db.js` activa SSL cuando `DATABASE_SSL=true` (Supabase lo exige).
+- Para Vercel se usa la conexión del *pooler* de Supabase (puerto 6543) y un pool pequeño, porque cada función abre sus propias conexiones.
+- Las tablas se crean ejecutando `sql/setup.sql` y `sql/seed.sql` en el editor SQL de Supabase. Las extensiones `uuid-ossp` y `pg_trgm` están disponibles allí.
+- La base local se sigue usando para desarrollar. Cada integrante decide con su `.env` a cuál se conecta.
+
+### 11.5 Cambiar contraseña (T25)
+
+Interfaz: en el encabezado del inventario, al hacer clic en el nombre del usuario se despliega un menú con la opción **Cambiar contraseña**. Esa opción abre una ventana modal con tres campos: contraseña actual, contraseña nueva y repetir contraseña nueva. Al guardar, el frontend envía la contraseña actual y la nueva. El campo "repetir contraseña nueva" solo sirve para que el navegador compruebe que la persona escribió bien la nueva; por eso no se envía al servidor.
+
+#### `PATCH /api/auth/password`
+
+Entrada:
+
+```json
+{ "claveActual": "Clave1234", "claveNueva": "OtraClave5678" }
+```
+
+`200 OK`: `{ "data": <Usuario> }`. **La sesión sigue abierta**: no se pide iniciar sesión de nuevo.
+
+Errores:
+
+- `400 VALIDACION` cuando falta un campo, la nueva no cumple §5.2 o es igual a la actual.
+- `400 VALIDACION` cuando la contraseña actual es incorrecta, con `detalles: [{ "campo": "claveActual", "mensaje": "La contraseña actual no es correcta" }]`, para que el frontend lo muestre debajo de ese campo. No se usa `401` para no confundirlo con una sesión vencida.
+- `401 NO_AUTENTICADO` sin sesión.
+
+Reglas del servidor: compara `claveActual` con el hash guardado usando `bcrypt.compare` y guarda `claveNueva` con `bcrypt` costo 10.
+
+### 11.6 Mejorar login (T21)
+
+La tarjeta no tiene descripción. Rafaela define el alcance y se agrega aquí antes de empezar. Lo que ya se sabe que falta en el login y el registro:
+
+- CAPTCHA en el registro (§5.3).
+- Validación de los datos del registro en el servidor (§5.2).
+- Límite de intentos de login (§5.3 y §11.1).
+
+### 11.7 Decisiones para confirmar en la revisión
+
+1. **Vercel para frontend y API en el mismo dominio**, en lugar de separar el backend en otro servicio.
+2. **CAPTCHA en la base de datos** (tabla `captchas`) para que funcione en Vercel.
+3. **Imágenes en Supabase Storage**, máximo 4 MB por imagen.
+4. **Correo de stock bajo** a las 8:00 y a las 16:00, incluyendo también los agotados.
+5. **Cambiar la contraseña no cierra la sesión.**
