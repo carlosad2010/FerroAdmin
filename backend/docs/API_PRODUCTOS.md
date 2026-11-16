@@ -4,6 +4,8 @@
 > **Qué es:** la descripción de las 6 rutas de `/api/productos` tal como están implementadas y probadas.
 > **Qué no es:** el acuerdo del equipo. Ese es `CONTRATO_API.md` (§5.5); si este documento y el contrato no coinciden, manda el contrato y se corrige el código.
 
+**Versión interactiva (Swagger):** con el servidor encendido, abre `http://localhost:3000/api/docs`. Ahí se puede ejecutar cada ruta con el botón "Try it out"; la página explica cómo iniciar sesión. La especificación cruda está en `http://localhost:3000/api/docs.json` y su fuente es `backend/docs/openapi.js`. No está disponible con `NODE_ENV=production`.
+
 Los ejemplos de respuesta son respuestas reales de la API con los datos de `backend/sql/seed.sql`. Los `id` y las fechas cambian en cada base de datos.
 
 ## 1. Resumen
@@ -579,6 +581,7 @@ Necesitan `backend/.env` con `DATABASE_URL` y la base creada con `sql/setup.sql`
 |---|---|---|
 | `tests/productos.test.js` | 72 | Las 6 rutas por HTTP: sesión, éxito, cada error de este documento, paginación, orden, concurrencia del stock e intentos de inyección SQL |
 | `tests/busqueda.test.js` | 16 | La búsqueda por nombre (T14) y el índice trigram |
+| `tests/openapi.test.js` | 6 | Que la documentación Swagger (`docs/openapi.js`) y las rutas de Express coincidan |
 
 - `productos.test.js` crea productos cuyo nombre empieza por `T15 prueba` y los elimina al terminar.
 - `busqueda.test.js` solo lee, y espera exactamente los 6 productos del seed.
