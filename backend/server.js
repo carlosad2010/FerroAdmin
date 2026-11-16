@@ -7,6 +7,7 @@ import { comprobarConexion } from './config/db.js';
 import authRoutes from './routes/auth.js';
 import categoriasRoutes from './routes/categorias.js';
 import productosRoutes from './routes/productos.js';
+import { programarValidacionStockBajo } from './services/stockBajo.js';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -60,6 +61,7 @@ app.use((err, req, res, next) => {
 try {
   await comprobarConexion();
   console.log(' Conexión a PostgreSQL OK');
+  programarValidacionStockBajo();
 } catch (error) {
   console.error(' Error al conectar a PostgreSQL:', error.message);
   process.exit(1);
