@@ -50,6 +50,7 @@ Con un token inválido o vencido el `mensaje` es `"Token inválido o expirado"`.
 {
   "id": 1,
   "nombre": "Martillo de uña 16 oz",
+  "imagenUrl": "/productos/Martillo.png",
   "categoria": { "id": 1, "nombre": "Herramientas manuales" },
   "precio": 28500,
   "stock": 12,
@@ -59,6 +60,7 @@ Con un token inválido o vencido el `mensaje` es `"Token inválido o expirado"`.
 ```
 
 - `precio` es un número JSON (`28500` o `35000.5`), no un texto.
+- `imagenUrl` es la dirección de la imagen del producto, o `null` si no tiene. Los productos del seed apuntan a archivos del frontend (`/productos/Martillo.png`).
 - `categoria` puede ser `null` si la categoría del producto fue eliminada de la base de datos.
 - Las fechas van en ISO 8601, en UTC.
 
@@ -73,6 +75,7 @@ Con un token inválido o vencido el `mensaje` es `"Token inválido o expirado"`.
 
 - Los tipos son estrictos: `"2"` (texto) no vale como `categoriaId`, ni `"100"` como `precio`. El frontend convierte con `Number()` antes de enviar.
 - `id`, `creadoEn` y `actualizadoEn` se ignoran si vienen en el cuerpo: los pone el servidor.
+- La imagen es opcional y solo se puede enviar al crear (§5). `PUT` no la cambia.
 
 ### 2.5 El `:id` de la URL
 
@@ -127,6 +130,7 @@ curl -b cookies.txt "http://localhost:3000/api/productos?buscar=mart&categoriaId
     {
       "id": 1,
       "nombre": "Martillo de uña 16 oz",
+      "imagenUrl": "/productos/Martillo.png",
       "categoria": { "id": 1, "nombre": "Herramientas manuales" },
       "precio": 28500,
       "stock": 12,
@@ -180,7 +184,7 @@ WHERE p.nombre ILIKE $1 ESCAPE '\' AND p.categoria_id = $2;
 ```
 
 ```sql
-SELECT p.id, p.nombre, p.precio, p.stock, p.creado_en, p.actualizado_en,
+SELECT p.id, p.nombre, p.imagen_url, p.precio, p.stock, p.creado_en, p.actualizado_en,
        c.id AS categoria_id, c.nombre AS categoria_nombre
 FROM productos p
 LEFT JOIN categorias c ON c.id = p.categoria_id
@@ -222,6 +226,7 @@ curl -b cookies.txt http://localhost:3000/api/productos/1
   "data": {
     "id": 1,
     "nombre": "Martillo de uña 16 oz",
+    "imagenUrl": "/productos/Martillo.png",
     "categoria": { "id": 1, "nombre": "Herramientas manuales" },
     "precio": 28500,
     "stock": 12,
@@ -248,7 +253,7 @@ curl -b cookies.txt http://localhost:3000/api/productos/999
 ### SQL
 
 ```sql
-SELECT p.id, p.nombre, p.precio, p.stock, p.creado_en, p.actualizado_en,
+SELECT p.id, p.nombre, p.imagen_url, p.precio, p.stock, p.creado_en, p.actualizado_en,
        c.id AS categoria_id, c.nombre AS categoria_nombre
 FROM productos p
 LEFT JOIN categorias c ON c.id = p.categoria_id
@@ -261,7 +266,36 @@ WHERE p.id = $1;
 
 Crea un producto. Sin parámetros en la URL.
 
-Cuerpo: los 4 campos de §2.4, todos obligatorios.
+Cuerpo: los 4 campos de §2.4, todos obligatorios, más la imagen, que es opcional.
+
+### Imagen del producto (opcional)
+
+Se puede enviar de dos formas, nunca las dos a la vez. Sin imagen, el producto queda con `imagenUrl: null`.
+
+| Forma | Cómo se envía | Reglas |
+|---|---|---|
+| Como URL | En JSON, campo `imagenUrl` | Texto que empieza por `http` o `https`, máximo 2048 caracteres. Vacío o `null` equivale a no enviar imagen |
+| Como archivo | En `multipart/form-data`, campo `imagen` | JPEG, PNG o WebP de máximo 5 MiB. Se revisa el contenido del archivo, no solo su tipo declarado |
+
+Al enviar un archivo, los demás campos viajan como texto y el servidor los convierte a número. El archivo se guarda en Supabase Storage: necesita `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en `backend/.env` (y, opcional, `SUPABASE_STORAGE_BUCKET`, que por defecto es `productos`). Sin esas variables, subir un archivo responde `500 ERROR_INTERNO` con el mensaje `El almacenamiento de imágenes no está configurado`; enviar una URL sigue funcionando.
+
+```bash
+curl -b cookies.txt -X POST http://localhost:3000/api/productos -F "nombre=Serrucho 20 pulgadas" -F "categoriaId=1" -F "precio=32000" -F "stock=8" -F "imagen=@serrucho.png"
+```
+
+Errores de la imagen, todos `400 VALIDACION`:
+
+| Caso | `mensaje` | ¿Trae `detalles`? |
+|---|---|---|
+| `imagenUrl` no es una URL | `Escribe una URL válida` | Sí, campo `imagenUrl` |
+| `imagenUrl` no empieza por `http` o `https` | `La URL debe comenzar con http o https` | Sí, campo `imagenUrl` |
+| `imagenUrl` de más de 2048 caracteres, o no es texto | `La URL debe tener máximo 2048 caracteres` | Sí, campo `imagenUrl` |
+| Archivo y URL a la vez | `Elige una URL o un archivo, no ambos` | Sí, campo `imagenUrl` |
+| El archivo no es JPEG, PNG ni WebP | `El archivo debe ser JPEG, PNG o WebP` | No |
+| El archivo dice ser imagen pero su contenido no lo es | `El archivo debe ser una imagen JPEG, PNG o WebP válida` | No |
+| El archivo supera 5 MiB | `La imagen no puede superar 5 MiB` | No |
+
+En los casos con `detalles`, el `mensaje` general es `Hay campos con errores` y el texto de la tabla va dentro de `detalles`.
 
 ### Éxito: 201
 
@@ -274,6 +308,7 @@ curl -b cookies.txt -X POST http://localhost:3000/api/productos -H "Content-Type
   "data": {
     "id": 7,
     "nombre": "Serrucho 20 pulgadas",
+    "imagenUrl": null,
     "categoria": { "id": 1, "nombre": "Herramientas manuales" },
     "precio": 32000,
     "stock": 8,
@@ -331,17 +366,17 @@ Una sola consulta inserta y devuelve el producto ya con su categoría.
 
 ```sql
 WITH p AS (
-  INSERT INTO productos (nombre, categoria_id, precio, stock)
-  VALUES ($1, $2, $3, $4)
+  INSERT INTO productos (nombre, categoria_id, precio, stock, imagen_url)
+  VALUES ($1, $2, $3, $4, $5)
   RETURNING *
 )
-SELECT p.id, p.nombre, p.precio, p.stock, p.creado_en, p.actualizado_en,
+SELECT p.id, p.nombre, p.imagen_url, p.precio, p.stock, p.creado_en, p.actualizado_en,
        c.id AS categoria_id, c.nombre AS categoria_nombre
 FROM p
 LEFT JOIN categorias c ON c.id = p.categoria_id;
 ```
 
-`$1` = `nombre`, `$2` = `categoriaId`, `$3` = `precio`, `$4` = `stock`.
+`$1` = `nombre`, `$2` = `categoriaId`, `$3` = `precio`, `$4` = `stock`, `$5` = `imagenUrl` (la URL enviada, la dirección pública del archivo subido, o `null`).
 
 La base de datos es la que detecta dos de los errores, y el servicio los traduce:
 
@@ -367,6 +402,7 @@ curl -b cookies.txt -X PUT http://localhost:3000/api/productos/7 -H "Content-Typ
   "data": {
     "id": 7,
     "nombre": "Serrucho 22 pulgadas",
+    "imagenUrl": null,
     "categoria": { "id": 1, "nombre": "Herramientas manuales" },
     "precio": 35000.5,
     "stock": 10,
@@ -423,13 +459,13 @@ WITH p AS (
   WHERE id = $5
   RETURNING *
 )
-SELECT p.id, p.nombre, p.precio, p.stock, p.creado_en, p.actualizado_en,
+SELECT p.id, p.nombre, p.imagen_url, p.precio, p.stock, p.creado_en, p.actualizado_en,
        c.id AS categoria_id, c.nombre AS categoria_nombre
 FROM p
 LEFT JOIN categorias c ON c.id = p.categoria_id;
 ```
 
-`$1` a `$4` = los 4 campos, `$5` = `id`. Si no devuelve filas, el producto no existe (404).
+`$1` a `$4` = los 4 campos, `$5` = `id`. Si no devuelve filas, el producto no existe (404). La columna `imagen_url` no aparece en el `SET`: por eso `PUT` conserva la imagen.
 
 ## 7. `PATCH /api/productos/:id/stock`
 
@@ -452,6 +488,7 @@ curl -b cookies.txt -X PATCH http://localhost:3000/api/productos/7/stock -H "Con
   "data": {
     "id": 7,
     "nombre": "Serrucho 22 pulgadas",
+    "imagenUrl": null,
     "categoria": { "id": 1, "nombre": "Herramientas manuales" },
     "precio": 35000.5,
     "stock": 7,
@@ -501,7 +538,7 @@ WITH p AS (
   WHERE id = $2 AND stock + $1 >= 0
   RETURNING *
 )
-SELECT p.id, p.nombre, p.precio, p.stock, p.creado_en, p.actualizado_en,
+SELECT p.id, p.nombre, p.imagen_url, p.precio, p.stock, p.creado_en, p.actualizado_en,
        c.id AS categoria_id, c.nombre AS categoria_nombre
 FROM p
 LEFT JOIN categorias c ON c.id = p.categoria_id;
@@ -579,7 +616,7 @@ Necesitan `backend/.env` con `DATABASE_URL` y la base creada con `sql/setup.sql`
 
 | Archivo | Pruebas | Qué cubre |
 |---|---|---|
-| `tests/productos.test.js` | 72 | Las 6 rutas por HTTP: sesión, éxito, cada error de este documento, paginación, orden, concurrencia del stock e intentos de inyección SQL |
+| `tests/productos.test.js` | 85 | Las 6 rutas por HTTP: sesión, éxito, cada error de este documento, la imagen del producto, paginación, orden, concurrencia del stock e intentos de inyección SQL |
 | `tests/busqueda.test.js` | 16 | La búsqueda por nombre (T14) y el índice trigram |
 | `tests/openapi.test.js` | 6 | Que la documentación Swagger (`docs/openapi.js`) y las rutas de Express coincidan |
 
@@ -596,4 +633,6 @@ Prueba de concurrencia: con stock 3 se lanzan 10 salidas de 1 unidad al mismo ti
 | Columna `descripcion` | No existe | Está en `setup.sql`, pero la API no la lee ni la devuelve |
 | Tabla `movimientos_inventario` | No existe | Está en `setup.sql`, pero el ajuste de stock no escribe en ella |
 | `categoria` del producto | Siempre un objeto | Puede ser `null`: la base permite `categoria_id` nulo (`ON DELETE SET NULL`) |
+| Imagen del producto | No existe | El producto tiene `imagenUrl`, y `POST` acepta `imagenUrl` o un archivo `imagen` (§5) |
+| Cambiar la imagen | No existe | No hay forma: `PUT` no la modifica y no existe una ruta para reemplazarla |
 | Nombre único con tildes | "Sin distinguir mayúsculas" | Depende del locale de la base: con locale `C`, `lower()` no convierte `É` en `é` |

@@ -22,7 +22,7 @@ import productosRoutes from '../routes/productos.js';
 process.env.JWT_SECRET ||= 'secreto-solo-para-pruebas';
 
 const PREFIJO = 'T15 prueba';
-const CAMPOS_PRODUCTO = ['id', 'nombre', 'categoria', 'precio', 'stock', 'creadoEn', 'actualizadoEn'];
+const CAMPOS_PRODUCTO = ['id', 'nombre', 'imagenUrl', 'categoria', 'precio', 'stock', 'creadoEn', 'actualizadoEn'];
 
 let servidor;
 let base;
@@ -342,6 +342,102 @@ describe('POST /api/productos', () => {
   test('un JSON mal formado responde 400', async () => {
     const r = await pedir('POST', '', { crudo: '{"nombre": ' });
     esError(r, 400, 'VALIDACION');
+  });
+});
+
+// ---------- Imagen del producto (campo opcional imagenUrl) ----------
+
+describe('imagen del producto', () => {
+  // Envía el producto como formulario multipart, que es como viaja un archivo.
+  async function crearConArchivo(archivo, tipo, extra = {}) {
+    const formulario = new FormData();
+    formulario.set('nombre', nombreUnico('archivo'));
+    formulario.set('categoriaId', String(categoriaId));
+    formulario.set('precio', '1000');
+    formulario.set('stock', '1');
+    for (const [campo, valor] of Object.entries(extra)) formulario.set(campo, valor);
+    formulario.set('imagen', new Blob([archivo], { type: tipo }), 'imagen');
+
+    const respuesta = await fetch(base, { method: 'POST', headers: { Cookie: cookie }, body: formulario });
+    return { status: respuesta.status, json: await respuesta.json() };
+  }
+
+  test('sin imagenUrl el producto se crea con imagenUrl null', async () => {
+    const creado = await crear();
+    assert.equal(creado.imagenUrl, null);
+  });
+
+  test('una URL http o https se guarda tal cual', async () => {
+    const imagenUrl = 'https://ejemplo.com/fotos/martillo.png';
+    const creado = await crear({ imagenUrl });
+    assert.equal(creado.imagenUrl, imagenUrl);
+
+    const leido = await pedir('GET', `/${creado.id}`);
+    assert.equal(leido.json.data.imagenUrl, imagenUrl);
+  });
+
+  test('imagenUrl vacía o null equivale a no enviar imagen', async () => {
+    assert.equal((await crear({ imagenUrl: '' })).imagenUrl, null);
+    assert.equal((await crear({ imagenUrl: '   ' })).imagenUrl, null);
+    assert.equal((await crear({ imagenUrl: null })).imagenUrl, null);
+  });
+
+  const invalidas = [
+    ['un texto que no es URL', 'esto no es una url'],
+    ['una URL que no es http ni https', 'ftp://ejemplo.com/foto.png'],
+    ['una URL de más de 2048 caracteres', `https://ejemplo.com/${'a'.repeat(2048)}`],
+    ['un valor que no es texto', 123],
+  ];
+
+  for (const [caso, imagenUrl] of invalidas) {
+    test(`${caso} responde 400 en el campo imagenUrl`, async () => {
+      const r = await pedir('POST', '', {
+        cuerpo: { nombre: nombreUnico(), categoriaId, precio: 1000, stock: 1, imagenUrl },
+      });
+      esError(r, 400, 'VALIDACION');
+      assert.deepEqual(camposConError(r), ['imagenUrl']);
+    });
+  }
+
+  test('PUT no cambia la imagen: conserva la imagenUrl que tenía', async () => {
+    const imagenUrl = 'https://ejemplo.com/fotos/taladro.png';
+    const creado = await crear({ imagenUrl });
+    const r = await pedir('PUT', `/${creado.id}`, {
+      cuerpo: { nombre: nombreUnico('editado'), categoriaId, precio: 2, stock: 2, imagenUrl: 'https://otra.com/x.png' },
+    });
+
+    assert.equal(r.status, 200);
+    assert.equal(r.json.data.imagenUrl, imagenUrl);
+  });
+
+  test('un archivo que no es JPEG, PNG ni WebP responde 400', async () => {
+    const r = await crearConArchivo('hola', 'text/plain');
+    esError(r, 400, 'VALIDACION');
+    assert.equal(r.json.error.mensaje, 'El archivo debe ser JPEG, PNG o WebP');
+  });
+
+  test('un archivo que dice ser PNG pero no lo es responde 400', async () => {
+    const r = await crearConArchivo('esto no es una imagen', 'image/png');
+    esError(r, 400, 'VALIDACION');
+    assert.equal(r.json.error.mensaje, 'El archivo debe ser una imagen JPEG, PNG o WebP válida');
+  });
+
+  test('enviar archivo y URL a la vez responde 400', async () => {
+    const r = await crearConArchivo('x', 'image/png', { imagenUrl: 'https://ejemplo.com/a.png' });
+    esError(r, 400, 'VALIDACION');
+    assert.deepEqual(camposConError(r), ['imagenUrl']);
+  });
+
+  test('un archivo de más de 5 MiB responde 400', async () => {
+    const r = await crearConArchivo(new Uint8Array(5 * 1024 * 1024 + 1), 'image/png');
+    esError(r, 400, 'VALIDACION');
+    assert.equal(r.json.error.mensaje, 'La imagen no puede superar 5 MiB');
+  });
+
+  test('con archivo, los campos del formulario siguen validándose', async () => {
+    const r = await crearConArchivo('x', 'image/png', { precio: 'abc', stock: '-1' });
+    esError(r, 400, 'VALIDACION');
+    assert.deepEqual(camposConError(r), ['precio', 'stock']);
   });
 });
 
