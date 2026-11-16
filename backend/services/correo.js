@@ -37,4 +37,19 @@ export async function enviarCorreoBienvenida({ nombre, email }) {
   });
 }
 
+// Correo con el enlace para crear una clave nueva (T21). El enlace vence en 30 minutos.
+export async function enviarCorreoRecuperacion({ nombre, email, token }) {
+  const base = process.env.FRONTEND_URL || 'http://localhost:5173';
+  const enlace = `${base}/#/restablecer?token=${token}`;
+  return enviarCorreo({
+    para: email,
+    asunto: 'Recupera tu clave de FerroAdmin',
+    texto: `Hola ${nombre}, usa este enlace para crear una clave nueva (vence en 30 minutos): ${enlace}\nSi no lo pediste tú, ignora este correo.`,
+    html: `<p>Hola <strong>${escaparHtml(nombre)}</strong>,</p>
+           <p>Para crear una clave nueva haz clic aquí (el enlace vence en 30 minutos):</p>
+           <p><a href="${enlace}">Crear clave nueva</a></p>
+           <p>Si no lo pediste tú, ignora este correo.</p>`,
+  });
+}
+
 export { nodemailer };
