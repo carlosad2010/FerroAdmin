@@ -3,7 +3,9 @@ dotenv.config();
 
 import express from 'express';
 import cookieParser from 'cookie-parser';
+import swaggerUi from 'swagger-ui-express';
 import { comprobarConexion } from './config/db.js';
+import { openapi } from './docs/openapi.js';
 import authRoutes from './routes/auth.js';
 import categoriasRoutes from './routes/categorias.js';
 import productosRoutes from './routes/productos.js';
@@ -24,6 +26,15 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/categorias', categoriasRoutes);
 app.use('/api/productos', productosRoutes);
+
+// Documentación interactiva (Swagger): http://localhost:3000/api/docs
+// Solo fuera de producción, para no publicar la documentación interna.
+if (process.env.NODE_ENV !== 'production') {
+  app.get('/api/docs.json', (req, res) => res.json(openapi));
+  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(openapi, {
+    customSiteTitle: 'FerroAdmin API',
+  }));
+}
 
 // 3. Manejador 404 para rutas de API no encontradas (§3.2 del contrato)
 app.use('/api/*', (req, res) => {
