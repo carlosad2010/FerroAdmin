@@ -41,6 +41,7 @@ const validacion = (detalles) => cuerpoError('VALIDACION', 'Hay campos con error
 const martillo = {
   id: 1,
   nombre: 'Martillo de uña 16 oz',
+  imagenUrl: '/productos/Martillo.png',
   categoria: { id: 1, nombre: 'Herramientas manuales' },
   precio: 28500,
   stock: 12,
@@ -51,6 +52,7 @@ const martillo = {
 const serrucho = {
   id: 7,
   nombre: 'Serrucho 20 pulgadas',
+  imagenUrl: 'https://ejemplo.com/fotos/serrucho.png',
   categoria: { id: 1, nombre: 'Herramientas manuales' },
   precio: 32000,
   stock: 8,
@@ -192,21 +194,44 @@ export const openapi = {
       post: {
         tags: ['Productos'],
         summary: 'Crear un producto',
-        description:
-          'Los 4 campos son obligatorios y los tipos son estrictos: `"2"` (texto) no vale como `categoriaId`. `id`, `creadoEn` y `actualizadoEn` se ignoran si vienen en el cuerpo.',
+        description: [
+          'Los 4 campos son obligatorios. `id`, `creadoEn` y `actualizadoEn` se ignoran si vienen en el cuerpo.',
+          '',
+          'La imagen es opcional y se puede enviar de dos formas, nunca las dos a la vez:',
+          '',
+          '- **Como URL**, en JSON: el campo `imagenUrl` con una dirección `http` o `https` de máximo 2048 caracteres. En JSON los tipos son estrictos: `"2"` (texto) no vale como `categoriaId`.',
+          '- **Como archivo**, en `multipart/form-data`: el campo `imagen` con un JPEG, PNG o WebP de máximo 5 MiB. Los demás campos viajan como texto y el servidor los convierte a número. El archivo se guarda en Supabase Storage, así que necesita `SUPABASE_URL` y `SUPABASE_SERVICE_ROLE_KEY` en el `.env`.',
+          '',
+          'Sin imagen, el producto queda con `imagenUrl: null`.',
+        ].join('\n'),
         security: conSesion,
         requestBody: {
           required: true,
           content: {
             'application/json': {
-              schema: ref('ProductoEntrada'),
-              example: { nombre: 'Serrucho 20 pulgadas', categoriaId: 1, precio: 32000, stock: 8 },
+              schema: ref('ProductoCrear'),
+              example: {
+                nombre: 'Serrucho 20 pulgadas',
+                categoriaId: 1,
+                precio: 32000,
+                stock: 8,
+                imagenUrl: 'https://ejemplo.com/fotos/serrucho.png',
+              },
             },
+            'multipart/form-data': { schema: ref('ProductoCrearConArchivo') },
           },
         },
         responses: {
           201: json('Producto creado', ref('RespuestaProducto'), { data: serrucho }),
-          400: error('Campos faltantes o inválidos, categoría inexistente o JSON mal formado', {
+          400: error('Campos faltantes o inválidos, categoría inexistente, imagen inválida o JSON mal formado', {
+            'URL de imagen inválida': validacion([
+              { campo: 'imagenUrl', mensaje: 'La URL debe comenzar con http o https' },
+            ]),
+            'Archivo y URL a la vez': validacion([
+              { campo: 'imagenUrl', mensaje: 'Elige una URL o un archivo, no ambos' },
+            ]),
+            'El archivo no es una imagen permitida': cuerpoError('VALIDACION', 'El archivo debe ser JPEG, PNG o WebP'),
+            'El archivo supera 5 MiB': cuerpoError('VALIDACION', 'La imagen no puede superar 5 MiB'),
             'Campos inválidos': validacion([
               { campo: 'nombre', mensaje: 'Debe tener entre 2 y 120 caracteres' },
               { campo: 'precio', mensaje: 'Debe ser un número mayor o igual a 0' },
@@ -219,6 +244,12 @@ export const openapi = {
           }),
           401: noAutenticado,
           409: nombreRepetido,
+          500: error('Solo al subir un archivo: el almacenamiento de imágenes no está configurado o no responde', {
+            'Almacenamiento sin configurar': cuerpoError(
+              'ERROR_INTERNO',
+              'El almacenamiento de imágenes no está configurado'
+            ),
+          }),
         },
       },
     },
@@ -240,7 +271,7 @@ export const openapi = {
         tags: ['Productos'],
         summary: 'Actualizar un producto (reemplazo completo)',
         description:
-          'Reemplaza los 4 campos: si falta alguno responde 400. `creadoEn` no cambia y `actualizadoEn` se renueva. Guardar un producto con su mismo nombre no es conflicto.',
+          'Reemplaza los 4 campos: si falta alguno responde 400. `creadoEn` no cambia y `actualizadoEn` se renueva. Guardar un producto con su mismo nombre no es conflicto. No cambia la imagen: `imagenUrl` se ignora y el producto conserva la que tenía.',
         security: conSesion,
         parameters: [parametroId],
         requestBody: {
@@ -450,6 +481,67 @@ export const openapi = {
       },
     },
 
+    '/api/auth/recuperar': {
+      post: {
+        tags: ['Autenticación'],
+        summary: 'Pedir un enlace para recuperar la clave',
+        description:
+          'Si el correo está registrado, se le envía un enlace con un código que vence a los 30 minutos; pedir uno nuevo anula los anteriores. La respuesta es la misma exista o no el correo, para no revelar quién tiene cuenta.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: ref('RecuperarEntrada'),
+              example: {
+                email: 'ana@ejemplo.com',
+                captchaId: 'b3f1c2e4-9a7d-4c1e-8f2a-1d2e3f4a5b6c',
+                captchaRespuesta: 11,
+              },
+            },
+          },
+        },
+        responses: {
+          200: json('Solicitud recibida (exista o no el correo)', ref('RespuestaMensaje'), {
+            data: { mensaje: 'Si el correo está registrado, te enviamos un enlace para crear una clave nueva.' },
+          }),
+          400: error('Falta el correo, o el CAPTCHA es incorrecto, ya se usó o venció', {
+            'Falta el correo': cuerpoError('VALIDACION', 'El correo es obligatorio'),
+            'CAPTCHA incorrecto o vencido': captchaInvalido,
+          }),
+        },
+      },
+    },
+
+    '/api/auth/restablecer': {
+      post: {
+        tags: ['Autenticación'],
+        summary: 'Cambiar la clave con el código del correo',
+        description: 'El código sirve una sola vez. No inicia sesión: después hay que usar `POST /api/auth/login`.',
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: ref('RestablecerEntrada'),
+              example: { token: '<código que llegó en el enlace del correo>', password: 'ClaveNueva123' },
+            },
+          },
+        },
+        responses: {
+          200: json('Clave cambiada', ref('RespuestaMensaje'), {
+            data: { mensaje: 'Tu clave fue cambiada. Ya puedes iniciar sesión.' },
+          }),
+          400: error('Faltan campos, la clave no cumple el tamaño, o el código no es válido', {
+            'Faltan campos': cuerpoError('VALIDACION', 'Faltan campos obligatorios'),
+            'Clave fuera de tamaño': cuerpoError('VALIDACION', 'La clave debe tener entre 8 y 72 caracteres'),
+            'Código inválido, usado o vencido': cuerpoError(
+              'TOKEN_INVALIDO',
+              'El enlace no es válido o ya venció. Pide uno nuevo.'
+            ),
+          }),
+        },
+      },
+    },
+
     '/api/auth/logout': {
       post: {
         tags: ['Autenticación'],
@@ -515,6 +607,12 @@ export const openapi = {
         properties: {
           id: { type: 'integer', example: 1 },
           nombre: { type: 'string', example: 'Martillo de uña 16 oz' },
+          imagenUrl: {
+            type: 'string',
+            nullable: true,
+            description: 'Dirección de la imagen, o null si el producto no tiene',
+            example: '/productos/Martillo.png',
+          },
           categoria: {
             allOf: [ref('Categoria')],
             nullable: true,
@@ -540,6 +638,65 @@ export const openapi = {
           categoriaId: { type: 'integer', minimum: 1, description: 'Debe existir en categorias' },
           precio: { type: 'number', minimum: 0, description: 'Máximo 2 decimales' },
           stock: { type: 'integer', minimum: 0 },
+        },
+      },
+
+      ProductoCrear: {
+        allOf: [
+          ref('ProductoEntrada'),
+          {
+            type: 'object',
+            properties: {
+              imagenUrl: {
+                type: 'string',
+                nullable: true,
+                maxLength: 2048,
+                description: 'Opcional. Debe comenzar con http o https. Vacío o null = sin imagen',
+              },
+            },
+          },
+        ],
+      },
+
+      ProductoCrearConArchivo: {
+        type: 'object',
+        required: ['nombre', 'categoriaId', 'precio', 'stock'],
+        properties: {
+          nombre: { type: 'string', minLength: 2, maxLength: 120 },
+          categoriaId: { type: 'integer', minimum: 1 },
+          precio: { type: 'number', minimum: 0 },
+          stock: { type: 'integer', minimum: 0 },
+          imagen: {
+            type: 'string',
+            format: 'binary',
+            description: 'JPEG, PNG o WebP de máximo 5 MiB',
+          },
+        },
+      },
+
+      RecuperarEntrada: {
+        type: 'object',
+        required: ['email', 'captchaId', 'captchaRespuesta'],
+        properties: {
+          email: { type: 'string', format: 'email' },
+          captchaId: { type: 'string', format: 'uuid', description: 'El de GET /api/auth/captcha' },
+          captchaRespuesta: { type: 'integer', description: 'Resultado de la suma, como número' },
+        },
+      },
+
+      RestablecerEntrada: {
+        type: 'object',
+        required: ['token', 'password'],
+        properties: {
+          token: { type: 'string', description: 'El código del enlace que llegó por correo' },
+          password: { type: 'string', format: 'password', minLength: 8, maxLength: 72 },
+        },
+      },
+
+      RespuestaMensaje: {
+        type: 'object',
+        properties: {
+          data: { type: 'object', properties: { mensaje: { type: 'string' } } },
         },
       },
 
@@ -638,6 +795,7 @@ export const openapi = {
                 enum: [
                   'VALIDACION',
                   'CAPTCHA_INVALIDO',
+                  'TOKEN_INVALIDO',
                   'NO_AUTENTICADO',
                   'CREDENCIALES_INVALIDAS',
                   'NO_ENCONTRADO',

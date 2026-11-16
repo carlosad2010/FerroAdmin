@@ -78,6 +78,8 @@ test('las rutas con sesión documentan el 401, y solo ellas', () => {
     'POST /api/auth/registro',
     'POST /api/auth/login',
     'POST /api/auth/logout',
+    'POST /api/auth/recuperar',
+    'POST /api/auth/restablecer',
   ];
 
   for (const { nombre, op } of operaciones()) {
