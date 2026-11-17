@@ -101,6 +101,12 @@ export const almacenarImagen = async (archivo) => {
   }
 
   if (!respuesta.ok) {
+    // Solo al log del servidor (nunca al usuario ni con la llave): sirve para saber
+    // si Supabase rechazó la llave (401/403), el bucket (404) o la dirección.
+    const detalle = await respuesta.text().catch(() => '');
+    console.error(
+      `Supabase Storage rechazó la subida: HTTP ${respuesta.status} (bucket "${config.bucket}") ${detalle.slice(0, 300)}`
+    );
     throw new ErrorApi(
       500,
       'ERROR_INTERNO',
