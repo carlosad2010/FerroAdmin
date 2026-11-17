@@ -37,16 +37,29 @@ export async function enviarCorreoBienvenida({ nombre, email }) {
   });
 }
 
-// Dirección pública de la aplicación, para los enlaces de los correos. Se busca en este orden:
-//   1. FRONTEND_URL (si se define, manda siempre).
-//   2. En Vercel, el dominio de producción del proyecto (variable que Vercel crea sola).
-//   3. En local, http://localhost:5173.
+const DIRECCION_LOCAL = 'http://localhost:5173';
+const esDireccionLocal = (url) => /^https?:\/\/(localhost|127\.0\.0\.1)(:|\/|$)/i.test(url);
+
+// Dirección pública de la aplicación, para los enlaces de los correos.
+// Funciona sin configurar nada, en local y en Vercel:
+//   - En tu computador: FRONTEND_URL si existe; si no, http://localhost:5173.
+//   - En Vercel (que define VERCEL): FRONTEND_URL solo si NO es de localhost (por ejemplo un
+//     dominio propio); si no, el dominio del proyecto, que Vercel crea solo.
+// No se arma con la cabecera Host de la petición: un atacante podría falsificarla y hacer
+// que el correo de otra persona traiga un enlace a su propio sitio.
 // Se devuelve sin "/" al final.
 export function direccionDelFrontend() {
-  const definida = process.env.FRONTEND_URL?.trim();
-  const dominioVercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
-  const base = definida || (dominioVercel ? `https://${dominioVercel}` : 'http://localhost:5173');
-  return base.replace(/\/+$/, '');
+  const definida = process.env.FRONTEND_URL?.trim() || '';
+  let base;
+
+  if (process.env.VERCEL) {
+    const dominio = process.env.VERCEL_PROJECT_PRODUCTION_URL || process.env.VERCEL_URL;
+    base = definida && !esDireccionLocal(definida) ? definida : dominio ? `https://${dominio.trim()}` : definida;
+  } else {
+    base = definida;
+  }
+
+  return (base || DIRECCION_LOCAL).replace(/\/+$/, '');
 }
 
 // Correo con el enlace para crear una clave nueva (T21). El enlace vence en 30 minutos.
