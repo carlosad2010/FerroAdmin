@@ -688,6 +688,7 @@ Errores:
 - `401 NO_AUTENTICADO` sin sesión.
 
 Reglas del servidor: compara `claveActual` con el hash guardado usando `bcrypt.compare` y guarda `claveNueva` con `bcrypt` costo 10.
+Después del cambio se envía un correo de aviso al usuario (no bloquea la respuesta; si el envío falla, la contraseña ya quedó cambiada).
 
 ### 11.6 Mejorar login (T21)
 
