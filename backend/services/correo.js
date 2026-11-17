@@ -37,10 +37,21 @@ export async function enviarCorreoBienvenida({ nombre, email }) {
   });
 }
 
+// Dirección pública de la aplicación, para los enlaces de los correos. Se busca en este orden:
+//   1. FRONTEND_URL (si se define, manda siempre).
+//   2. En Vercel, el dominio de producción del proyecto (variable que Vercel crea sola).
+//   3. En local, http://localhost:5173.
+// Se devuelve sin "/" al final.
+export function direccionDelFrontend() {
+  const definida = process.env.FRONTEND_URL?.trim();
+  const dominioVercel = process.env.VERCEL_PROJECT_PRODUCTION_URL?.trim();
+  const base = definida || (dominioVercel ? `https://${dominioVercel}` : 'http://localhost:5173');
+  return base.replace(/\/+$/, '');
+}
+
 // Correo con el enlace para crear una clave nueva (T21). El enlace vence en 30 minutos.
 export async function enviarCorreoRecuperacion({ nombre, email, token }) {
-  const base = process.env.FRONTEND_URL || 'http://localhost:5173';
-  const enlace = `${base}/#/restablecer?token=${token}`;
+  const enlace = `${direccionDelFrontend()}/#/restablecer?token=${token}`;
   return enviarCorreo({
     para: email,
     asunto: 'Recupera tu clave de FerroAdmin',
