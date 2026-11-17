@@ -1,3 +1,4 @@
+import { waitUntil } from '@vercel/functions';
 import { verificarCaptcha } from '../services/captcha.js';
 import { solicitarRecuperacion, restablecerClave } from '../services/recuperacion.js';
 import { enviarCorreoRecuperacion } from '../services/correo.js';
@@ -23,8 +24,12 @@ export const pedirRecuperacion = async (req, res) => {
     const resultado = await solicitarRecuperacion(email);
     if (resultado) {
       // Sin await: la respuesta tarda igual exista o no el correo, y un fallo de envio no rompe nada.
-      enviarCorreoRecuperacion({ nombre: resultado.usuario.nombre, email: resultado.usuario.email, token: resultado.token })
-        .catch((error) => console.error('No se pudo enviar el correo de recuperación:', error.message));
+      // waitUntil (Vercel) mantiene viva la función hasta que el correo termine de enviarse:
+      // sin él, Vercel la congela al responder y el correo nunca sale. Fuera de Vercel no hace nada.
+      waitUntil(
+        enviarCorreoRecuperacion({ nombre: resultado.usuario.nombre, email: resultado.usuario.email, token: resultado.token })
+          .catch((error) => console.error('No se pudo enviar el correo de recuperación:', error.code, error.message || error))
+      );
     }
 
     return res.status(200).json(RESPUESTA_GENERICA);
