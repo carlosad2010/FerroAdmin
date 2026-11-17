@@ -1,6 +1,7 @@
 import { obtenerSesion, activarLogin, activarRegistro } from './auth.js';
 import { mostrarInventario } from './inventario.js';
 import { montarRecuperar, montarRestablecer } from './recuperacion.js'; // LINEA NUEVA
+import { activarMenuCuenta } from './cuenta.js'; // T25
 
 const vista = document.getElementById('vista');
 
@@ -170,6 +171,7 @@ async function mostrarVista() {
     mostrarCascaron(cascaronApp, cascaronAuth);
     document.title = `${ruta === '/productos' ? 'Productos' : 'Inventario'} | FerroAdmin`;
     mostrarInventario(cascaronApp, usuario, ruta === '/productos');
+    activarMenuCuenta(cascaronApp); // T25: menú de la cuenta (cambiar contraseña)
   } else {
     location.hash = '#/inventario';
   }

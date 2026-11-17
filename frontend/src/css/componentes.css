@@ -541,3 +541,74 @@ form > .error {
   letter-spacing: var(--ajuste-titulo);
   color: var(--color-primario);
 }
+
+/* --- Menú de la cuenta (T25) ---------------------------------------------
+   cuenta.js convierte el nombre del encabezado en un botón con este menú. */
+
+.cuenta { position: relative; }
+
+.cuenta-boton {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0.75rem 0.25rem 0.25rem;
+  font: inherit;
+  font-weight: 600;
+  color: var(--color-texto);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-pildora);
+  cursor: pointer;
+  transition: background var(--transicion);
+}
+
+.cuenta-boton:hover,
+.cuenta-boton[aria-expanded="true"] { background: var(--color-fondo-hundido); }
+
+.cuenta-menu {
+  position: absolute;
+  top: calc(100% + 0.5rem);
+  right: 0;
+  z-index: 50;
+  min-width: 14rem;
+  margin: 0;
+  padding: 0.375rem;
+  list-style: none;
+  background: var(--color-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-md);
+  box-shadow: var(--sombra-md);
+  transform-origin: top right;
+  /* Cerrado: invisible y un poco más arriba. "visibility" impide enfocarlo. */
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition: opacity var(--transicion), transform var(--transicion), visibility 0s linear 150ms;
+}
+
+/* Abierto: baja hasta su lugar mientras aparece */
+.cuenta-menu.abierto {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition: opacity var(--transicion), transform var(--transicion), visibility 0s;
+}
+
+.cuenta-opcion {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  font: inherit;
+  font-weight: 500;
+  text-align: left;
+  color: var(--color-texto);
+  background: transparent;
+  border: 0;
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+
+.cuenta-opcion:hover { background: var(--color-fondo-hundido); }
+.cuenta-opcion .icono { color: var(--color-texto-suave); }
