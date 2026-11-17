@@ -566,6 +566,41 @@ export const openapi = {
       },
     },
 
+    '/api/auth/password': {
+      patch: {
+        tags: ['Autenticación'],
+        summary: 'Cambiar la contraseña',
+        description:
+          'El usuario con sesión cambia su contraseña. Se comprueba la actual con bcrypt antes de guardar la nueva, y se envía un correo de aviso. La sesión sigue abierta (CONTRATO_API.md §11.5).',
+        security: conSesion,
+        requestBody: {
+          required: true,
+          content: {
+            'application/json': {
+              schema: {
+                type: 'object',
+                required: ['claveActual', 'claveNueva'],
+                properties: {
+                  claveActual: { type: 'string' },
+                  claveNueva: { type: 'string', minLength: 8, maxLength: 72 },
+                },
+              },
+              example: { claveActual: 'Clave1234', claveNueva: 'OtraClave5678' },
+            },
+          },
+        },
+        responses: {
+          200: json('Contraseña cambiada', { type: 'object', properties: { data: ref('Usuario') } }, { data: usuario }),
+          400: error('Falta un campo, la nueva no cumple las reglas o la actual no es correcta', {
+            'Clave actual incorrecta': validacion([{ campo: 'claveActual', mensaje: 'La contraseña actual no es correcta.' }]),
+            'Clave nueva muy corta': validacion([{ campo: 'claveNueva', mensaje: 'La contraseña nueva debe tener entre 8 y 72 caracteres.' }]),
+            'Nueva igual a la actual': validacion([{ campo: 'claveNueva', mensaje: 'La contraseña nueva debe ser distinta de la actual.' }]),
+          }),
+          401: noAutenticado,
+        },
+      },
+    },
+
     // ----- Estado -----
     '/api/health': {
       get: {
